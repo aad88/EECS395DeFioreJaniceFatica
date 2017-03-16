@@ -6,7 +6,7 @@
 		<meta name="description" content="">
 		<meta name="author" content="">
 		
-		<title>{{page_header}}</title>
+		<title>Motherfucker</title>
 		
 		<!-- Bootstrap core CSS -->
 		<link href="static/css/bootstrap.css" rel="stylesheet">
@@ -30,7 +30,7 @@
 	<body>
 		<div class="header-wrapper">
 			<div class="site-name">
-				<h1>_SITE_NAME_</h1>
+				<h1>{{page_name}}</h1>
 				<h2>_SITE_NAME_SUBHEAD_</h2>
 			</div>
 		</div>
@@ -44,9 +44,12 @@
 					</div>
 					<div class="navbar-collapse collapse">
 						<ul class="nav navbar-nav">
-							{% for nav_op in nav_bar %}
-								<li><a href={{nav_op.1}}>{{nav_op.0}}</a></li>
-							{% endfor %}
+							<li><a href="#">_NAV_OP_1_</a></li>
+							<li><a href="#">_NAV_OP_2_</a></li>
+							<li><a href="#">_NAV_OP_3_</a></li>
+							<li><a href="#">_NAV_OP_4_</a></li>
+							<li><a href="#">_NAV_OP_5_</a></li>
+							<li><a href="#">_NAV_OP_6_</a></li>
 						</ul>
 					</div> <!--/.navbar-collapse -->
 				</div>
@@ -54,13 +57,15 @@
 			<div class="mini-menu">
 				<label>
 					<select class="selectnav">
-						{% for nav_op in nav_bar %}
-							{% if nav_op.0 == current_nav %}
-								<option value={{nav_op.1}} selected="">{{nav_op.0}}</option>
-							{% else %}
-								<option value={{nav_op.1}}>{{nav_op.0}}</option>
-							{% endif %}
-						{% endfor %}
+						<option value="#" selected="">_NAV_SELECT_1_</option>
+						<option value="#">_NAV_SELECT_2_</option>
+						<option value="#">_NAV_SELECT_2.1_</option>
+						<option value="#">_NAV_SELECT_2.1.1_</option>
+						<option value="#">_NAV_SELECT_2.2_</option>
+						<option value="#">_NAV_SELECT_2.2.1_</option>
+						<option value="#">_NAV_SELECT_3_</option>
+						<option value="#">_NAV_SELECT_4_</option>
+						<option value="#">_NAV_SELECT_5_</option>
 					</select>
 				</label>
 			</div>
