@@ -30,7 +30,7 @@
 	<body>
 		<div class="header-wrapper">
 			<div class="site-name">
-				<h1>_SITE_NAME_</h1>
+				<h1>{{page_name}}</h1>
 				<h2>_SITE_NAME_SUBHEAD_</h2>
 			</div>
 		</div>

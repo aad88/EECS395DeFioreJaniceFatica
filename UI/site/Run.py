@@ -9,8 +9,10 @@ app = Flask(__name__)
 @app.route('/')
 def home_template():
 	return render_template(
-		'home'
+		'home',
+		page_name='Presents of Mind!!!!!!'
 	)
 
 if __name__ == '__main__':
 	app.run()
+
