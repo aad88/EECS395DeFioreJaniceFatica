@@ -9,8 +9,15 @@ app = Flask(__name__)
 # nav bar listing
 NAV_BAR_ITEMS = (
 	'Home',
+	'Search Anonymously',
+	'Login'
+)
+
+NAV_BAR_LOGGED_IN_ITEMS = (
+	'Home',
 	'Account',
-	'Search'
+	'Search',
+	'Logout'
 )
 
 # template dictionary
@@ -38,9 +45,17 @@ TEMPLATE_DIC = {
 	'Search': (
 		'search',
 		'/search',
-		'Search Gift Ideas - Presents of Mind'
+		'Search - Presents of Mind'
+	),
+	'Logout': (
+		None,
+		'/logout',
+		None
 	)
 }
+
+# template dictionary aliases
+TEMPLATE_DIC['Search Anonymously'] = TEMPLATE_DIC['Search']
 
 # template dictionary entry index constants
 TEMPLATE_DIC_NAME_ENTRY = 0
@@ -54,7 +69,12 @@ TEMPLATE_DIC_PAGE_HEAD_ENTRY = 2
 def create_nav_bar():
 	nav_bar = []
 	
-	for name in NAV_BAR_ITEMS:
+	if index():
+		items = NAV_BAR_LOGGED_IN_ITEMS
+	else:
+		items = NAV_BAR_ITEMS
+	
+	for name in items:
 		path = TEMPLATE_DIC[name][TEMPLATE_DIC_PATH_ENTRY]
 		nav_bar.append((name, path))
 	
@@ -69,15 +89,17 @@ def index():
 
 # TODO: Database integartion, return token
 def login(username, password):
-	print(">> RECEIVED LOGIN REQUEST FOR <user={} pass={}>".format(username, password))
+	if index():
+		logout()
 	
+	print(">> RECEIVED LOGIN REQUEST FOR <user={} pass={}>".format(username, password))
 	session['username'] = username
 
 # TODO: Database integration, use token instead of username
 def logout():
-	print(">> RECEIVED LOGOUT REQUEST FOR <user={}>".format(username))
-	
-	session.pop('username', None)
+	if index():
+		print(">> RECEIVED LOGOUT REQUEST FOR <user={}>".format(index()))
+		session.pop('username', None)
 
 # ------------------------
 # TEMPLATE FUNCTIONALITIES
@@ -118,8 +140,6 @@ def home_template():
 # LOGIN
 @app.route(TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY])
 def login_template():
-	print("running main")
-	
 	return render_template(
 		# template name, from dictionary
 		TEMPLATE_DIC['Login'][TEMPLATE_DIC_NAME_ENTRY],
@@ -175,6 +195,12 @@ def search_template():
 		# template-specific fields
 		dummy=''
 	)
+
+@app.route(TEMPLATE_DIC['Logout'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
+def logout_template_with_logout_action():
+	logout()
+	
+	return redirect(TEMPLATE_DIC['Home'][TEMPLATE_DIC_PATH_ENTRY], 302)
 
 app.secret_key = 'AAX1$*.d/21532&HSD*[]ASD'
 if __name__ == '__main__':
