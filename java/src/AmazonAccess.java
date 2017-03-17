@@ -14,7 +14,7 @@ public class AmazonAccess{
         AmazonAccess.search(terms, 0.0, Double.MAX_VALUE);
     }
 
-    public static void search(Set<String> terms, double lowPrice, double highPrice){
+    public static List<String> search(Set<String> terms, double lowPrice, double highPrice){
         SignedRequestsHelper helper;
         try{
           helper = SignedRequestsHelper.getInstance(ENDPOINT, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY);
@@ -27,6 +27,20 @@ public class AmazonAccess{
         String requestUrl = null;
 
         Map<String, String> params = new HashMap<String, String>();
+        List<String> output = new ArrayList<String>();
+
+        String minPrice = "";
+        String maxPrice = "";
+        minPrice += lowPrice;
+        maxPrice += highPrice;
+        int minDec = minPrice.indexOf(".");
+        int maxDec = maxPrice.indexOf(".");
+        if(minDec != -1){
+          minPrice = minPrice.substring(0, minDec) + minPrice.substring(minDec + 1, minPrice.length());
+        }
+        if(maxDec != -1){
+          maxPrice = maxPrice.substring(0, maxDec) + maxPrice.substring(maxDec + 1, maxPrice.length());
+        }
 
         params.put("Service", "AWSECommerceService");
         params.put("Operation", "ItemSearch");
@@ -34,15 +48,16 @@ public class AmazonAccess{
         params.put("AssociateTag", "");
         params.put("SearchIndex", "All");
         params.put("ResponseGroup", "Images,ItemAttributes,Offers");
+        params.put("MinimumPrice", minPrice);
+        params.put("MaximumPrice", maxPrice);
 
         for(String keyword : terms){
           params.remove("Keywords");
           params.put("Keywords", keyword);
 
           requestUrl = helper.sign(params);
-          //use url to access amazon
-
-          //process returned xml or html
+          output.add(requestUrl);
         }
+        return output;
     }
 }
