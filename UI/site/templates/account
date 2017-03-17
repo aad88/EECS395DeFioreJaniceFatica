@@ -2,6 +2,11 @@
 {% extends "_wrapper.html" %}
 
 {% block content %}
-	<h1>Account</h1>
+	{% if username %}
+		<h1>{{username}}'s Account</h1>
+		<p>Welcome back, {{username}}! Here are some details pertaining to your account:</p>
+	{% else %}
+		<p>You are not currently signed in. Please click "Login" in the navigation panel above, or use the button below, to log into your account.</p>
+	{% endif %}
 {% endblock %}
 

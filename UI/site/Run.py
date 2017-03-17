@@ -80,14 +80,13 @@ def create_nav_bar():
 	
 	return nav_bar
 
-# TODO: Database integration, use token instead of username
 def index():
 	if 'username' in session:
 		return escape(session['username'])
 	else:
 		return None
 
-# TODO: Database integartion, return token
+# TODO: Database integartion for password check
 def login(username, password):
 	if index():
 		logout()
@@ -95,7 +94,6 @@ def login(username, password):
 	print(">> RECEIVED LOGIN REQUEST FOR <user={} pass={}>".format(username, password))
 	session['username'] = username
 
-# TODO: Database integration, use token instead of username
 def logout():
 	if index():
 		print(">> RECEIVED LOGOUT REQUEST FOR <user={}>".format(index()))
@@ -165,7 +163,12 @@ def login_template_with_login_action():
 # ACCOUNT
 @app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY])
 def account_template():
-	print(index())
+	username = None
+	past_searches = None
+	
+	if index():
+		username = index()
+		past_searches = ['Claire']
 	
 	return render_template(
 		# template name, from dictionary
@@ -177,7 +180,8 @@ def account_template():
 		page_header=TEMPLATE_DIC['Account'][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
 		
 		# template-specific fields
-		dummy=''
+		username=username,
+		past_searches=past_searches
 	)
 
 # SEARCH

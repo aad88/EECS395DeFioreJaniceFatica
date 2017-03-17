@@ -6,8 +6,5 @@
 	<p>
 		We do some fun stalking shit blah blah blah...
 	</p>
-	<p>
-		You need to log in, though. Before you can do the fun stalking shit, click "Login" in the naviation bar above, or click the button below.
-	</p>
 {% endblock %}
 
