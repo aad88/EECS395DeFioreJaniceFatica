@@ -2,11 +2,19 @@
 {% extends "_wrapper.html" %}
 
 {% block content %}
-	<h1>Login</h1>
-	<form action={{login_path}} method="POST">
-		<input type="text" name="username">
-		<input type="text" name="password">
-		<input type="submit" value="ENTER">
-	</form>
+	<div class="container">
+		<div class="featured-block">
+			<div class="block">
+				<div class="block-title">
+					<h1>Login</h1>
+				</div>
+				<form action={{login_path}} method="POST">
+					<input type="text" name="username">
+					<input type="text" name="password">
+					<input type="submit" value="ENTER">
+				</form>
+			</div>
+		</div>
+	</div>
 {% endblock %}
 
