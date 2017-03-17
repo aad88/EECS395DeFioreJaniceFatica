@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+{% extends "_wrapper.html" %}
+
+{% block content %}
+	<h1>Account</h1>
+{% endblock %}
+
