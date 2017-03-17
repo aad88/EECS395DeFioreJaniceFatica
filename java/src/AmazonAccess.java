@@ -21,7 +21,7 @@ public class AmazonAccess{
         }
         catch(Exception e){
           e.printStackTrace();
-          return;
+          return null;
         }
 
         String requestUrl = null;
