@@ -132,7 +132,8 @@ def home_template():
 		page_header=TEMPLATE_DIC['Home'][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
 		
 		# template-specific fields
-		dummy=''
+		login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
+		logged_in=index()
 	)
 
 # LOGIN
@@ -197,7 +198,8 @@ def search_template():
 		page_header=TEMPLATE_DIC['Search'][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
 		
 		# template-specific fields
-		dummy=''
+		facebook_search_path=TEMPLATE_DIC['Search'][TEMPLATE_DIC_PATH_ENTRY],
+		logged_in=index()
 	)
 
 @app.route(TEMPLATE_DIC['Logout'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])

@@ -5,10 +5,25 @@
 	<div class="container">
 		<div class="featured-block">
 			<div class="block">
-				<div class="block-title">
+				<div class="thumbnail">
+					<div class="caption">
 					<h1>Welcome to Presents of Mind!</h1>
+					{% if not logged_in %}
+						<p>You are currently not logged in. Please log in to start utilizing the full features of this site.</p>
+						<a href={{login_path}} class="btn">Login</a>
+					{% endif %}
+			</div>
+		</div>
+		<div class="ruler"></div>
+	</div>
+	
+	<div class="container">
+		<div class="featured-item">
+			<div class="block">
+				<div class="block-title">
+					<h1>About Us</h1>
 				</div>
-				<p>We do fun stalking shit blah blah blah</p>
+				<p>blah blah blah</p>
 			</div>
 		</div>
 	</div>

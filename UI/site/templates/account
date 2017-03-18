@@ -11,8 +11,8 @@
 					</div>
 					<p>Welcome back, {{username}}! Here are some details pertaining to your account:</p>
 				</div>
-				<div class="ruler"></div>
 			</div>
+			<div class="ruler"></div>
 		</div>
 		
 		<div class="container">
