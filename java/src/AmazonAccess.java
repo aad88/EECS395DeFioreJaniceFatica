@@ -1,7 +1,7 @@
-package com.amazon.advertising.api.access;
+//package com.amazon.advertising.api.access;
 
 import java.util.*;
-import java.xml.parsers.*;
+import javax.xml.parsers.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
