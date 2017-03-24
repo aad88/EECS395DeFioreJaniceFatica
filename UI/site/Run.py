@@ -66,6 +66,23 @@ TEMPLATE_DIC_PAGE_HEAD_ENTRY = 2
 # SERVER FUNCTIONS
 # ----------------
 
+def setup_template(template, **kw_args):
+	return render_template(
+		# template name, from dictionary
+		TEMPLATE_DIC[template][TEMPLATE_DIC_NAME_ENTRY],
+	
+		# common fields
+		nav_bar=create_nav_bar(),
+		current_nav=template,
+		page_header=TEMPLATE_DIC[template][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
+	
+		# any other keyword arguments for Jinja
+		**kw_args
+	)
+
+def redirect_to(template):
+	return redirect(TEMPLATE_DIC[template][TEMPLATE_DIC_PATH_ENTRY], 302)
+
 def create_nav_bar():
 	nav_bar = []
 	
@@ -79,6 +96,10 @@ def create_nav_bar():
 		nav_bar.append((name, path))
 	
 	return nav_bar
+
+# ----------------------------
+# ACCOUNT MANAGEMENT FUNCTIONS
+# ----------------------------
 
 def index():
 	if 'username' in session:
@@ -106,14 +127,8 @@ def logout():
 # TEST PAGE
 @app.route(TEMPLATE_DIC['Test Page'][TEMPLATE_DIC_PATH_ENTRY])
 def test_page_template():
-	return render_template(
-		# template name, from dictionary
-		TEMPLATE_DIC['Test Page'][TEMPLATE_DIC_NAME_ENTRY],
-		
-		# common fields
-		nav_bar=create_nav_bar(),
-		current_nav='Test Page',
-		page_header=TEMPLATE_DIC['Test Page'][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
+	return setup_template(
+		'Test Page',
 		
 		# template-specific fields
 		dummy=''
@@ -122,14 +137,8 @@ def test_page_template():
 # HOME
 @app.route(TEMPLATE_DIC['Home'][TEMPLATE_DIC_PATH_ENTRY])
 def home_template():
-	return render_template(
-		# template name, from dictionary
-		TEMPLATE_DIC['Home'][TEMPLATE_DIC_NAME_ENTRY],
-		
-		# common fields
-		nav_bar=create_nav_bar(),
-		current_nav='Home',
-		page_header=TEMPLATE_DIC['Home'][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
+	return setup_template(
+		'Home',
 		
 		# template-specific fields
 		login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
@@ -137,29 +146,24 @@ def home_template():
 	)
 
 # LOGIN
-@app.route(TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY])
-def login_template():
-	return render_template(
-		# template name, from dictionary
-		TEMPLATE_DIC['Login'][TEMPLATE_DIC_NAME_ENTRY],
-		
-		# common fields
-		nav_bar=create_nav_bar(),
-		current_nav='Login',
-		page_header=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
-		
-		# template-specific fields
-		login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY]
-	)
-
-# LOGIN, with login submission
-@app.route(TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST'])
+@app.route(TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])
 def login_template_with_login_action():
-	username = request.form['username']
-	password = request.form['password']
-	login(username, password)
+	if request.method == 'GET':
+		return setup_template(
+			'Login',
+			
+			# template-specific fields
+			login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY]
+		)
+	elif request.method == 'POST':
+		username = request.form['username']
+		password = request.form['password']
+		login(username, password)
+		
+		return redirect_to('Account')
 	
-	return redirect(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY], 302)
+	# no support for whatever method was used
+	raise Exception
 
 # ACCOUNT
 @app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY])
@@ -169,16 +173,10 @@ def account_template():
 	
 	if index():
 		username = index()
-		past_searches = ['Claire']
+		past_searches = ['Alex', 'Lexi', 'Zach']
 	
-	return render_template(
-		# template name, from dictionary
-		TEMPLATE_DIC['Account'][TEMPLATE_DIC_NAME_ENTRY],
-		
-		# common fields
-		nav_bar=create_nav_bar(),
-		current_nav='Account',
-		page_header=TEMPLATE_DIC['Account'][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
+	return setup_template(
+		'Account',
 		
 		# template-specific fields
 		username=username,
@@ -188,14 +186,8 @@ def account_template():
 # SEARCH
 @app.route(TEMPLATE_DIC['Search'][TEMPLATE_DIC_PATH_ENTRY])
 def search_template():
-	return render_template(
-		# template name, from dictionary
-		TEMPLATE_DIC['Search'][TEMPLATE_DIC_NAME_ENTRY],
-		
-		# common fields
-		nav_bar=create_nav_bar(),
-		current_nav='Search',
-		page_header=TEMPLATE_DIC['Search'][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
+	return setup_template(
+		'Search',
 		
 		# template-specific fields
 		facebook_search_path=TEMPLATE_DIC['Search'][TEMPLATE_DIC_PATH_ENTRY],
@@ -206,7 +198,7 @@ def search_template():
 def logout_template_with_logout_action():
 	logout()
 	
-	return redirect(TEMPLATE_DIC['Home'][TEMPLATE_DIC_PATH_ENTRY], 302)
+	return redirect_to(['Home'])
 
 app.secret_key = 'AAX1$*.d/21532&HSD*[]ASD'
 if __name__ == '__main__':

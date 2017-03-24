@@ -27,12 +27,12 @@
 							<div class="panel panel-default">
 								<div class="panel-heading accordion-caret">
 									<h4 class="panel-title">
-										<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+										<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href={{"#collapse"+(loop.index|string)}}>
 											{{search}}
 										</a>
 									</h4>
 								</div>
-								<div id="collapseOne" class="panel-collapse collapse">
+								<div id={{"collapse"+(loop.index|string)}} class="panel-collapse collapse">
 									<div class="panel-body">No information about this search is available at this time.</div>
 								</div>
 							</div>
