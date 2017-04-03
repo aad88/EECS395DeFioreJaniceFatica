@@ -9,7 +9,7 @@ try:
 	import sqlalchemy
 	import sqlalchemy.ext.declarative
 except ImportError:
-	print("IMPORT ERROR: Need to install Flask via pip")
+	print("IMPORT ERROR: Need to install SQLAlchemy")
 	sys.exit(1)
 
 KEY_QUERY = """

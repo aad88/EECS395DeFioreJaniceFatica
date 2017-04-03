@@ -2,11 +2,9 @@
 import sys
 
 # project imports
-import database
+from processes import database, facebook
 
 # external imports
-try:
-	import database
 try:
 	from flask import Flask, render_template, request, redirect, session, escape
 except ImportError:
@@ -14,23 +12,32 @@ except ImportError:
 	sys.exit(1)
 app = Flask(__name__)
 
-# ------------------
-# FACEBOOK RESOURCES
-# ------------------
+# ------------------------------
+# APPLICATION RESOURCE VARIABLES
+# ------------------------------
 
-# facebook app key
-FACEBOOK_KEY_NAME = 'fb_app_key'
-# url for facebook login prompt
-FACEBOOK_LOGIN_URL = "https://www.facebook.com/v2.8/dialog/oauth?client_id={}&redirect_uri={}"
-# url for redirect after login prompt
-FACEBOOK_LOGIN_REDIRECT_URL = '127.0.0.1:5000/account'
-
-# ---------------------
-# APPLICATION RESOURCES
-# ---------------------
-
+# database credentials file
+DB_CREDS_FILE = 'db_creds.txt'
 # application key, for cookies
 APP_KEY_NAME = 'app_key'
+# facebook app key
+FACEBOOK_KEY_NAME = 'fb_app_key'
+
+# ---------------------------
+# DATABASE-ORIENTED VARIABLES
+# ---------------------------
+
+# database session
+DB_SESSION = database.connect_with_cred_file(DB_CREDS_FILE)
+
+# wrapper method for using the database to gey a requested key
+def key(name):
+	return database.get_key(name)
+
+# grabbed application key from database
+APP_KEY = key(APP_KEY_NAME)
+# grabbed facebook app key from database
+FACEBOOK_KEY = key(FACEBOOK_KEY_NAME)
 
 # ------------------------------
 # APPLICATION LAYOUT DEFINITIONS
@@ -65,13 +72,18 @@ TEMPLATE_DIC = {
 	'Login': (
 		'login',
 		'/login',
-		'Login - Presents of Mind'
+		'Login via Facebook - Presents of Mind'
 	),
-	'Facebook Redirect': (
+	'Facebook Login Launch': (
 		None,
 		'/login/facebook',
 		None
 	),
+	'Facebook Login Land': (
+		None,
+		'/login/facebook/finished',
+		None
+	)
 	'Account': (
 		'account',
 		'/account',
@@ -83,8 +95,18 @@ TEMPLATE_DIC = {
 		'Search - Presents of Mind'
 	),
 	'Logout': (
-		None,
+		'logout',
 		'/logout',
+		'Logout via Facebook - Presents of Mind'
+	),
+	'Facebook Logout Launch': (
+		None,
+		'/logout/facebook',
+		None
+	),
+	'Facebook Logout Land': (
+		None,
+		'logout/facebook/finished',
 		None
 	)
 }
@@ -100,9 +122,6 @@ TEMPLATE_DIC_PAGE_HEAD_ENTRY = 2
 # ----------------
 # SERVER FUNCTIONS
 # ----------------
-
-def key(name):
-	return database.get_key(name)
 
 def setup_template(template, **kw_args):
 	return render_template(
@@ -139,13 +158,14 @@ def create_nav_bar():
 # ACCOUNT MANAGEMENT FUNCTIONS
 # ----------------------------
 
+# TODO: outdated with Facebook integration
 def index():
 	if 'username' in session:
 		return escape(session['username'])
 	else:
 		return None
 
-# TODO: Database integartion for password check
+# TODO: outdated with Facebook integration
 def login(username, password):
 	if index():
 		logout()
@@ -153,6 +173,7 @@ def login(username, password):
 	print(">> RECEIVED LOGIN REQUEST FOR <user={} pass={}>".format(username, password))
 	session['username'] = username
 
+# TODO: outdated with Facebook integration
 def logout():
 	if index():
 		print(">> RECEIVED LOGOUT REQUEST FOR <user={}>".format(index()))
@@ -190,18 +211,21 @@ def login_template():
 		'Login',
 		
 		# template-specific fields
-		login_redirect_path=TEMPLATE_DIC['Facebook Redirect'][TEMPLATE_DIC_PATH_ENTRY]
+		login_redirect_path=TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY]
 	)
 
-# LOGIN
-@app.route(TEMPLATE_DIC['Facebook Redirect'][TEMPLATE_DIC_PATH_ENTRY])
-def login_redirect():
+# FACEBOOK LOGIN LAUNCH
+@app.route(TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY])
+def login_launch_redirect():
+	# TODO: remove
 	login('test', 'test')
 	
-	print(get_facebook_app_key())
-	url = FACEBOOK_LOGIN_URL.format(key(FACEBOOK_KEY_NAME), FACEBOOK_LOGIN_REDIRECT_URL)
-	
-	return redirect(url, 302)
+	return facebook.begin_login(FACEBOOK_KEY)
+
+# FACEBOOK LOGIN LAND
+@app.route(TEMPLATE_DIC['Facebook Login Land'][TEMPLATE_DIC_PATH_ENTRY])
+def login_land_redirect():
+	return redirect_to('Account')
 
 # ACCOUNT
 @app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY])
@@ -233,18 +257,34 @@ def search_template():
 	)
 
 # LOGOUT
-@app.route(TEMPLATE_DIC['Logout'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
-def logout_template_with_logout_action():
+@app.route(TEMPLATE_DIC['Logout'][TEMPLATE_DIC_PATH_ENTRY])
+def logout_templaten():
+	return setup_template(
+		'Logout',
+		
+		# template-specific fields
+		login_redirect_path=TEMPLATE_DIC['Facebook Logout Launch'][TEMPLATE_DIC_PATH_ENTRY]
+	)
+
+# FACEBOOK LOGOUT LAUNCH
+@app.route(TEMPLATE_DIC['Facebook Logout Launch'][TEMPLATE_DIC_PATH_ENTRY])
+def logout_launch_redirect():
+	# TODO: remove
 	logout()
 	
-	return redirect_to('Home')
+	return facebook.begin_logout(FACEBOOK_KEY)
+
+# FACEBOOK LOGOUT LAND
+@app.route(TEMPLATE_DIC['Facebook Logout Land'][TEMPLATE_DIC_PATH_ENTRY])
+def login_land_redirect():
+	return redirect_to('Login')
 
 # -------------------------------------
 # MAIN PROCEDURE - START UP APPLICATION
 # -------------------------------------
 
 if __name__ == '__main__':
-	app.secret_key = key(APP_KEY_NAME)
+	app.secret_key = APP_KEY
 	
 	app.run()
 
