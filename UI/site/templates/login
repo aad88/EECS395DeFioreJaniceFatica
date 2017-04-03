@@ -5,14 +5,12 @@
 	<div class="container">
 		<div class="featured-block">
 			<div class="block">
-				<div class="block-title">
-					<h1>Login</h1>
-				</div>
-				<form action={{login_path}} method="POST">
-					<input type="text" name="username">
-					<input type="text" name="password">
-					<input type="submit" value="ENTER">
-				</form>
+				<div class="thumbnail">
+					<div class="caption">
+					<h1>Login via Facebook</h1>
+					<p>In order to use this service, you must log in via your Facebook account.</p>
+					<p>Click the button below to be redirected to Facebook's login page.</p>
+					<a href={{login_redirect_path}} class="btn">Go to Facebook</a>
 			</div>
 		</div>
 	</div>

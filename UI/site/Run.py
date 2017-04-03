@@ -1,10 +1,40 @@
 # native imports
+import sys
 
 # project imports
+import database
 
 # external imports
-from flask import Flask, render_template, request, redirect, session, escape
+try:
+	import database
+try:
+	from flask import Flask, render_template, request, redirect, session, escape
+except ImportError:
+	print("IMPORT ERROR: Need to install Flask via pip")
+	sys.exit(1)
 app = Flask(__name__)
+
+# ------------------
+# FACEBOOK RESOURCES
+# ------------------
+
+# facebook app key
+FACEBOOK_KEY_NAME = 'fb_app_key'
+# url for facebook login prompt
+FACEBOOK_LOGIN_URL = "https://www.facebook.com/v2.8/dialog/oauth?client_id={}&redirect_uri={}"
+# url for redirect after login prompt
+FACEBOOK_LOGIN_REDIRECT_URL = '127.0.0.1:5000/account'
+
+# ---------------------
+# APPLICATION RESOURCES
+# ---------------------
+
+# application key, for cookies
+APP_KEY_NAME = 'app_key'
+
+# ------------------------------
+# APPLICATION LAYOUT DEFINITIONS
+# ------------------------------
 
 # nav bar listing
 NAV_BAR_ITEMS = (
@@ -37,6 +67,11 @@ TEMPLATE_DIC = {
 		'/login',
 		'Login - Presents of Mind'
 	),
+	'Facebook Redirect': (
+		None,
+		'/login/facebook',
+		None
+	),
 	'Account': (
 		'account',
 		'/account',
@@ -65,6 +100,9 @@ TEMPLATE_DIC_PAGE_HEAD_ENTRY = 2
 # ----------------
 # SERVER FUNCTIONS
 # ----------------
+
+def key(name):
+	return database.get_key(name)
 
 def setup_template(template, **kw_args):
 	return render_template(
@@ -120,9 +158,9 @@ def logout():
 		print(">> RECEIVED LOGOUT REQUEST FOR <user={}>".format(index()))
 		session.pop('username', None)
 
-# ------------------------
-# TEMPLATE FUNCTIONALITIES
-# ------------------------
+# ------------------
+# TEMPLATE FUNCTIONS
+# ------------------
 
 # TEST PAGE
 @app.route(TEMPLATE_DIC['Test Page'][TEMPLATE_DIC_PATH_ENTRY])
@@ -146,24 +184,24 @@ def home_template():
 	)
 
 # LOGIN
-@app.route(TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])
-def login_template_with_login_action():
-	if request.method == 'GET':
-		return setup_template(
-			'Login',
-			
-			# template-specific fields
-			login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY]
-		)
-	elif request.method == 'POST':
-		username = request.form['username']
-		password = request.form['password']
-		login(username, password)
+@app.route(TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY])
+def login_template():
+	return setup_template(
+		'Login',
 		
-		return redirect_to('Account')
+		# template-specific fields
+		login_redirect_path=TEMPLATE_DIC['Facebook Redirect'][TEMPLATE_DIC_PATH_ENTRY]
+	)
+
+# LOGIN
+@app.route(TEMPLATE_DIC['Facebook Redirect'][TEMPLATE_DIC_PATH_ENTRY])
+def login_redirect():
+	login('test', 'test')
 	
-	# no support for whatever method was used
-	raise Exception
+	print(get_facebook_app_key())
+	url = FACEBOOK_LOGIN_URL.format(key(FACEBOOK_KEY_NAME), FACEBOOK_LOGIN_REDIRECT_URL)
+	
+	return redirect(url, 302)
 
 # ACCOUNT
 @app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY])
@@ -194,13 +232,19 @@ def search_template():
 		logged_in=index()
 	)
 
+# LOGOUT
 @app.route(TEMPLATE_DIC['Logout'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
 def logout_template_with_logout_action():
 	logout()
 	
-	return redirect_to(['Home'])
+	return redirect_to('Home')
 
-app.secret_key = 'AAX1$*.d/21532&HSD*[]ASD'
+# -------------------------------------
+# MAIN PROCEDURE - START UP APPLICATION
+# -------------------------------------
+
 if __name__ == '__main__':
+	app.secret_key = key(APP_KEY_NAME)
+	
 	app.run()
 
