@@ -15,7 +15,7 @@ app = Flask(__name__)
 # ---------------------------
 
 # base URL for redirects back to our application
-REDIRECT_URL_BASE = 'http://127.0.0.1:5000'
+REDIRECT_URL_BASE = 'http://www.presentsofmind.com'
 # url for facebook login prompt
 FACEBOOK_LOGIN_URL = "https://www.facebook.com/v2.8/dialog/oauth?client_id={}&redirect_uri={}"
 # url for facebook logout prompt
@@ -57,12 +57,4 @@ def begin_logout(key, template_loc):
 def grab_target_page(key, target):
 	# TODO
 	return None
-
-
-
-
-
-print(FACEBOOK_KEY)
-	url = FACEBOOK_LOGIN_URL.format(key(FACEBOOK_KEY_NAME), FACEBOOK_LOGIN_REDIRECT_URL)
-
 

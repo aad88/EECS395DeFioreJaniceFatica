@@ -2,11 +2,6 @@
 {% extends "_wrapper.html" %}
 
 {% block content %}
-	<script src="static/js/fb_login.js"></script>
-	
-	
-	<fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
-	
 	<div class="container">
 		<div class="featured-block">
 			<div class="block">

@@ -83,7 +83,7 @@ TEMPLATE_DIC = {
 		None,
 		'/login/facebook/finished',
 		None
-	)
+	),
 	'Account': (
 		'account',
 		'/account',
@@ -106,7 +106,7 @@ TEMPLATE_DIC = {
 	),
 	'Facebook Logout Land': (
 		None,
-		'logout/facebook/finished',
+		'/logout/facebook/finished',
 		None
 	)
 }
@@ -276,7 +276,7 @@ def logout_launch_redirect():
 
 # FACEBOOK LOGOUT LAND
 @app.route(TEMPLATE_DIC['Facebook Logout Land'][TEMPLATE_DIC_PATH_ENTRY])
-def login_land_redirect():
+def logout_land_redirect():
 	return redirect_to('Login')
 
 # -------------------------------------
