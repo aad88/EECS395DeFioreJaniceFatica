@@ -2,6 +2,6 @@
 {% extends "_wrapper.html" %}
 
 {% block content %}
-	<h1>PAGE CONTENT HERE</h1>
+	<h1>PAGE STUFF</h1>
 {% endblock %}
 

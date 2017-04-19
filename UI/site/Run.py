@@ -10,6 +10,17 @@ try:
 except ImportError:
 	print("IMPORT ERROR: Need to install Flask via pip")
 	sys.exit(1)
+try:
+	from flask.ext.social import Social
+except ImportError:
+	print("IMPORT ERROR: Need to install Flask-Social via pip")
+	sys.exit(1)
+try:
+	from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
+except ImportError:
+	print("IMPORT ERROR: Need to install Flask-SQLAlchemy via pip")
+	sys.exit(1)
+
 app = Flask(__name__)
 
 # ------------------------------
@@ -20,8 +31,10 @@ app = Flask(__name__)
 DB_CREDS_FILE = 'db_creds.txt'
 # application key, for cookies
 APP_KEY_NAME = 'app_key'
-# facebook app key
-FACEBOOK_KEY_NAME = 'fb_app_key'
+# facebook app id
+FACEBOOK_ID_KEY_NAME = 'fb_app_id'
+# facebook app secret
+FACEBOOK_SECRET_KEY_NAME = 'fb_app_secret'
 
 # ---------------------------
 # DATABASE-ORIENTED VARIABLES
@@ -36,8 +49,10 @@ def key(name):
 
 # grabbed application key from database
 APP_KEY = key(APP_KEY_NAME)
-# grabbed facebook app key from database
-FACEBOOK_KEY = key(FACEBOOK_KEY_NAME)
+# grabbed facebook app id from database
+FACEBOOK_ID = key(FACEBOOK_ID_KEY_NAME)
+# grabbed facebook app secret from database
+FACEBOOK_SECRET = key(FACEBOOK_SECRET_KEY_NAME)
 
 # ------------------------------
 # APPLICATION LAYOUT DEFINITIONS
@@ -132,6 +147,7 @@ def setup_template(template, **kw_args):
 		nav_bar=create_nav_bar(),
 		current_nav=template,
 		page_header=TEMPLATE_DIC[template][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
+		logged_in=index(),
 	
 		# any other keyword arguments for Jinja
 		**kw_args
@@ -200,8 +216,7 @@ def home_template():
 		'Home',
 		
 		# template-specific fields
-		login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
-		logged_in=index()
+		login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY]
 	)
 
 # LOGIN
@@ -285,6 +300,12 @@ def logout_land_redirect():
 
 if __name__ == '__main__':
 	app.secret_key = APP_KEY
+	
+	app.config['SOCIAL_FACEBOOK'] = {
+		'consumer_key': FACEBOOK_ID,
+		'consumer_secret': FACEBOOK_SECRET
+	}
+	app.config['SECURITY_POST_LOGIN'] = '/profile'
 	
 	app.run()
 

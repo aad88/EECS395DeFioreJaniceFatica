@@ -1,4 +1,4 @@
-service=mysql
+service=postgresql
 address=localhost
 username=test
 password=test
