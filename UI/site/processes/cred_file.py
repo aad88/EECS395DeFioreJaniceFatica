@@ -10,6 +10,8 @@ WHITESPACE_TO_REMOVE = string.whitespace.replace(' ', '')
 
 CRED_DELIM = '='
 ACCEPTED_CREDS = [
+	'service',
+	'address',
 	'username',
 	'password',
 	'database'

@@ -3,3 +3,5 @@ sudo pip install Flask
 
 sudo pip install facebook-sdk
 
+sudo pip install requests
+

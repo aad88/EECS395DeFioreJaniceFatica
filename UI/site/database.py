@@ -12,6 +12,7 @@ except ImportError:
 	print("IMPORT ERROR: Need to install SQLAlchemy")
 	sys.exit(1)
 
+URL_BASE = "{}://{}/"
 KEY_QUERY = """
 SELECT
 	keys.key
@@ -25,8 +26,9 @@ WHERE
 BASE = sqlalchemy.ext.declarative.declarative_base()
 SESSION = sqlalchemy.orm.scoped_session(sqlalchemy.orm.sessionmaker())
 
-def init_db(username, password, database):
-	connection_url = sqlalchemy.engine.url.make_url('postgresql://localhost/')
+def init_db(service, address, username, password, database):
+	url = URL_BASE.format(service, address)
+	connection_url = sqlalchemy.engine.url.make_url(url)
 	connection_url.username = username
 	connection_url.password = password
 	connection_url.database = database
@@ -35,13 +37,13 @@ def init_db(username, password, database):
 	SESSION.configure(bind=engine)
 	BASE.metadata.create_all(engine)
 
-def connect(username, password, database):
-	init_db(username, password, database)
+def connect(service, address, username, password, database):
+	init_db(service, address, username, password, database)
 	return SESSION
 
 def connect_with_cred_file(file_path):
 	creds = cred_file.read(file_path)
-	return connect(creds['username'], creds['password'], creds['database'])
+	return connect(creds['service'], creds['address'], creds['username'], creds['password'], creds['database'])
 
 # TODO: Sanitize query args to defend against injection
 def sanitize(val):
