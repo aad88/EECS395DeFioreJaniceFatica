@@ -28,39 +28,6 @@
 		</script>
 	</head>
 	<body>
-		<!--<script src="static/js/fb_init.js"></script>-->
-		<script>
-			window.fbAsyncInit = function() {
-				FB.init({
-					appId: '1483387461695099',
-					cookie: true,
-					xfbml: true,
-					version: 'v2.8'
-				});
-				
-				FB.AppEvents.logPageView();
-				
-				FB.login(function(response) {
-					if (response.authResponse) {
-						console.log('Welcome!  Fetching your information.... ');
-						FB.api('/me', function(response) {
-							console.log('Good to see you, ' + response.name + '.');
-						});
-					} else {
-						console.log('User cancelled login or did not fully authorize.');
-					}
-				});
-			};
-			
-			(function(d, s, id){
-				var js, fjs = d.getElementsByTagName(s)[0];
-				if (d.getElementById(id)) {return;}
-				js = d.createElement(s); js.id = id;
-				js.src = "//connect.facebook.net/en_US/sdk.js";
-				fjs.parentNode.insertBefore(js, fjs);
-			} (document, 'script', 'facebook-jssdk'));
-		</script>
-		
 		<div class="header-wrapper">
 			<div class="site-name">
 				<h1>Presents of Mind</h1>
