@@ -2,7 +2,7 @@
 import sys
 
 # project imports
-from processes import database, facebook, interests_form
+from processes import database, facebook, interests_form, pom_account
 
 # external imports
 try:
@@ -40,9 +40,9 @@ def key(name):
 # grabbed application key from database
 APP_KEY = key(APP_KEY_NAME)
 # grabbed facebook app id from database
-FACEBOOK_ID = key(FACEBOOK_ID_KEY_NAME)
+#FACEBOOK_ID = key(FACEBOOK_ID_KEY_NAME)
 # grabbed facebook app secret from database
-FACEBOOK_SECRET = key(FACEBOOK_SECRET_KEY_NAME)
+#FACEBOOK_SECRET = key(FACEBOOK_SECRET_KEY_NAME)
 
 # ------------------------------
 # APPLICATION LAYOUT DEFINITIONS
@@ -89,6 +89,11 @@ TEMPLATE_DIC = {
 		'/login/facebook/finished',
 		None
 	),
+	'Register': (
+		'register',
+		'/register',
+		'Register for an Account - Presents of Mind'
+	),
 	'Account': (
 		'account',
 		'/account',
@@ -134,32 +139,14 @@ TEMPLATE_DIC_NAME_ENTRY = 0
 TEMPLATE_DIC_PATH_ENTRY = 1
 TEMPLATE_DIC_PAGE_HEAD_ENTRY = 2
 
-# ----------------
-# SERVER FUNCTIONS
-# ----------------
-
-def setup_template(template, **kw_args):
-	return render_template(
-		# template name, from dictionary
-		TEMPLATE_DIC[template][TEMPLATE_DIC_NAME_ENTRY],
-	
-		# common fields
-		nav_bar=create_nav_bar(),
-		current_nav=template,
-		page_header=TEMPLATE_DIC[template][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
-		logged_in=index(),
-	
-		# any other keyword arguments for Jinja
-		**kw_args
-	)
-
-def redirect_to(template):
-	return redirect(TEMPLATE_DIC[template][TEMPLATE_DIC_PATH_ENTRY], 302)
+# ------------------------
+# TEMPLATE USAGE FUNCTIONS
+# ------------------------
 
 def create_nav_bar():
 	nav_bar = []
 	
-	if index():
+	if pom_account.index():
 		items = NAV_BAR_LOGGED_IN_ITEMS
 	else:
 		items = NAV_BAR_ITEMS
@@ -170,34 +157,32 @@ def create_nav_bar():
 	
 	return nav_bar
 
-# ----------------------------
-# ACCOUNT MANAGEMENT FUNCTIONS
-# ----------------------------
+def setup_template(template, **kw_args):
+	return render_template(
+		# template name, from dictionary
+		TEMPLATE_DIC[template][TEMPLATE_DIC_NAME_ENTRY],
+		
+		# page information arguments
+		page_header=TEMPLATE_DIC[template][TEMPLATE_DIC_PAGE_HEAD_ENTRY],
+		page_path=TEMPLATE_DIC[template][TEMPLATE_DIC_PATH_ENTRY],
+		
+		# page wrapper arguments
+		nav_bar=create_nav_bar(),
+		current_nav=template,
+		
+		# login status arguments
+		logged_in=pom_account.index(),
+		
+		# any other keyword arguments for Jinja
+		**kw_args
+	)
 
-# TODO: outdated with Facebook integration
-def index():
-	if 'username' in session:
-		return escape(session['username'])
-	else:
-		return None
+def redirect_to(template):
+	return redirect(TEMPLATE_DIC[template][TEMPLATE_DIC_PATH_ENTRY], 302)
 
-# TODO: outdated with Facebook integration
-def login(username, password):
-	if index():
-		logout()
-	
-	print(">> RECEIVED LOGIN REQUEST FOR <user={} pass={}>".format(username, password))
-	session['username'] = username
-
-# TODO: outdated with Facebook integration
-def logout():
-	if index():
-		print(">> RECEIVED LOGOUT REQUEST FOR <user={}>".format(index()))
-		session.pop('username', None)
-
-# ------------------
-# TEMPLATE FUNCTIONS
-# ------------------
+# ------------------------------------
+# TEMPLATE ROUTING, RESPONSE FUNCTIONS
+# ------------------------------------
 
 # TEST PAGE
 @app.route(TEMPLATE_DIC['Test Page'][TEMPLATE_DIC_PATH_ENTRY])
@@ -220,14 +205,45 @@ def home_template():
 	)
 
 # LOGIN
-@app.route(TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY])
+@app.route(TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])
 def login_template():
-	return setup_template(
-		'Login',
+	if request.method == 'GET':
+		return setup_template(
+			'Login',
+			
+			# template-specific fields
+			login_redirect_path=TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY],
+			register_path=TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY],
+			bad_entry=False
+		)
+	elif request.method == 'POST':
+		username = str(request.form['username'])
+		password = str(request.form['password'])
 		
-		# template-specific fields
-		login_redirect_path=TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY]
-	)
+		bad_user = not pom_account.is_valid_username(username)
+		bad_pass = not pom_account.is_valid_password(password)
+		
+		if bad_user or bad_pass:
+			return setup_template(
+				'Login',
+				
+				# template-specific fields
+				login_redirect_path=TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY],
+				register_path=TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY],
+				bad_entry=True
+			)
+		
+		if not pom_account.login(username, password):
+			return setup_template(
+				'Login',
+				
+				# template-specific fields
+				login_redirect_path=TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY],
+				register_path=TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY],
+				bad_entry=True
+			)
+		
+		return redirect_to('Account')
 
 # FACEBOOK LOGIN LAUNCH
 @app.route(TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY])
@@ -242,14 +258,59 @@ def login_launch_redirect():
 def login_land_redirect():
 	return redirect_to('Account')
 
+# REGISTER
+@app.route(TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])
+def register_template():
+	if request.method == 'GET':
+		return setup_template(
+			'Register',
+			
+			# template-specific fields
+			login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
+			attempted_user=None,
+			bad_user=False,
+			bad_pass=False
+		)
+	elif request.method == 'POST':
+		username = str(request.form['username'])
+		password = str(request.form['password'])
+		confirm = str(request.form['password_confirm'])
+		
+		bad_user = not pom_account.is_valid_username(username)
+		bad_pass = not pom_account.is_valid_password(password, confirmation=confirm)
+		
+		if bad_user or bad_pass:
+			return setup_template(
+				'Register',
+				
+				# template-specific fields
+				login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
+				attempted_user=username,
+				bad_user=bad_user,
+				bad_pass=bad_pass
+			)
+		
+		if not pom_account.attempt_create_account(username, password):
+			return setup_template(
+				'Register',
+				
+				# template-specific fields
+				login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
+				attempted_user=username,
+				bad_user=True,
+				bad_pass=False
+			)
+		
+		return redirect_to('Account')
+
 # ACCOUNT
 @app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY])
 def account_template():
 	username = None
 	past_searches = None
 	
-	if index():
-		username = index()
+	if pom_account.index():
+		username = pom_account.index()
 		past_searches = ['Alex', 'Lexi', 'Zach']
 	
 	return setup_template(
@@ -329,7 +390,7 @@ def logout_template():
 @app.route(TEMPLATE_DIC['Facebook Logout Launch'][TEMPLATE_DIC_PATH_ENTRY])
 def logout_launch_redirect():
 	# TODO: remove
-	logout()
+	pom_account.logout()
 	
 	return redirect_to('Login')
 

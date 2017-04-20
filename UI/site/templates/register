@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+{% extends "_wrapper.html" %}
+
+{% block content %}
+	<div class="container">
+		<div class="featured-block">
+			<div class="block">
+				<div class="thumbnail">
+					<div class="caption">
+						<h1>Register for an Account</h1>
+						<p>Please use the form below to register for an account for Presents of Mind.</p>
+						<hr />
+						<form action={{page_path}} method="POST">
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Username:
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="text" name="username" {% if attempted_user %} value={{attempted_user}} {% endif %}>
+								</div>
+							</div>
+							<br>
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Password:
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="password" name="password">
+								</div>
+							</div>
+							<br>
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Confirm Password:
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="password" name="password_confirm">
+								</div>
+							</div>
+							<br>
+							<br>
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6"></div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="submit" value="ENTER">
+								</div>
+							</div>
+						</form>
+						{% if bad_user or bad_pass %}
+							<br>
+							<div class="row">
+								<div class="col-md-12">
+									{% if bad_user %}
+										<p>The specified username is unavailable, or is invalid. Make sure your desired username is between 6 and 20 characters long and contains only letters and numbers.</p>
+									{% endif %}
+									{% if bad_pass %}
+										<p>The specified password does not match the confirmation password, or is invalid. Make sure your desired password is between 8 and 40 characters long and contains only letters, numbers, and the following special characters: !@#$%^&*-_=,.</p>
+									{% endif %}
+								</div>
+							</div>
+						{% endif %}
+						<hr />
+						<div class="row">
+							<div class="col-md-12">
+								Already have an account? <a href={{login_path}}>Sign in here.</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+

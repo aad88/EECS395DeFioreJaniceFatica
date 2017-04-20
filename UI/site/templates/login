@@ -23,8 +23,9 @@
 					<div class="caption">
 						<div class="row">
 							<div class="col-md-12">
-								<h1>Log In</h1>
-								<p>Please use the form below to log in.</p>
+								<h1>Login via Presents of Mind</h1>
+								<p>Alternatively, you can log in through an account created with Presents of Mind. A Presents of Mind account is not linked with your Facebook account, but can still be used to keep track of past searches you've performed.</p>
+								<p>Enter your login information below, or register for an account if you do not have an account.
 							</div>
 						</div>
 						<hr />
@@ -37,6 +38,7 @@
 									<input type="text" name="username">
 								</div>
 							</div>
+							<br>
 							<div class="row">
 								<div class="col-md-3 col-sm-6 col-xs-6">
 									&emsp;Password:
@@ -45,6 +47,8 @@
 									<input type="password" name="password">
 								</div>
 							</div>
+							<br>
+							<br>
 							<div class="row">
 								<div class="col-md-3 col-sm-6 col-xs-6"></div>
 								<div class="col-md-3 col-sm-6 col-xs-6">
@@ -56,10 +60,12 @@
 							<br>
 							<div class="row">
 								<div class="col-md-12">
-									The username/password combination was incorrect.
+									The username/password combination was incorrect, or the username/password contained invalid characters.
 								</div>
 							</div>
 						{% endif %}
+						<hr />
+						Don't have an account? <a href={{register_path}}>Register for a Presents of Mind account!</a>
 					</div>
 				</div>
 			</div>
