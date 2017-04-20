@@ -54,7 +54,7 @@
 								</div>
 								<div class="col-md-3 col-sm-6 col-xs-6">
 									Example Entry
-									<textarea name="interests_ex" rows="7" readonly>Basketball&#x0D;Metal Music&#x0D;Reading&#x0D;Bullshittery</textarea>
+									<textarea name="interests_ex" rows="7" readonly>Reading&#x0D;Cleveland Cavaliers&#x0D;Metal Music&#x0D;Coffee Mugs</textarea>
 								</div>
 							</div>
 							<br>

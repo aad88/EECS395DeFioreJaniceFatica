@@ -3,29 +3,34 @@
 
 {% block content %}
 	<div class="container">
+		<br>
+		<h2>Welcome to Presents of Mind!</h2>
+		{% if not logged_in %}
+			<div class="featured-block">
+				<div class="block">
+					<div class="thumbnail">
+						<div class="caption">
+							<p>You are currently not logged in. Please log in to start utilizing the full features of this site.</p>
+							<a href={{login_path}} class="btn">Login</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endif %}
+		<br>
+		<div class="ruler"></div>
 		<div class="featured-block">
 			<div class="block">
 				<div class="thumbnail">
 					<div class="caption">
-						<h1>Welcome to Presents of Mind!</h1>
-						{% if not logged_in %}
-							<p>You are currently not logged in. Please log in to start utilizing the full features of this site.</p>
-							<a href={{login_path}} class="btn">Login</a>
-						{% endif %}
+						<h1>About Us</h1>
+						<p>This site is a Senior Project web application developed by Alex DeFiore, Alexis Fatica, and Zachary Janice.</p>
+						<p>Ever had problems coming up with gift ideas for someone you know? Whether it's for lack of inspiration or too many options to choose from, giving gifts can be hard. Our goal is to aid in the process of choosing gift ideas for specific individuals. Using Facebook as a source of basic information about the person you're in need of a gift for - or entering the information in yourself - will allow us to retrieve many ideas for you to consider. These ideas will hopefully provide a starting point for you in your search, if not giving you the perfect gift idea altogether! For those who are instead in search for confirmation for the right gift idea, the same gift idea search is backed by machine learning with past examples, which will help to narrow suggestions down based on gifts given in the past.</p>
+						<p>The ultimate goal of our project is to ease the hardest part of gift giving: The idea. Hopefully, with a strong foundation of ideas to reference, you can find the gift you're looking to give!</p>
+						<p>As mentioned before, this web application has the ability to use your Facebook account to perform searches on those you're looking to give gifts for. While this requires both you and the person on interest to have a Facebook account, as well as other potential obstacles such as privacy restrictions between the two of you, searching in this manner will attempt to pull the basic information necessary from the other's Facebook profile. In the event that a Facebook search is not preferred or otherwise not possible, a manual form is still available for use.</p>
+						<p>Please know that we do NOT STORE ANY PERSONAL INFORMATION in our database. While the basic information retrieved may be stored for machine learning purposes, it is not associated with the name of that individual. Likewise, after a search query is completed, only the name of the individual and the resulting ideas are linked together as information about a search. In short, a person's name and information are NEVER associated with one another.</p>
 					</div>
 				</div>
-			</div>
-		</div>
-		<div class="ruler"></div>
-	</div>
-	
-	<div class="container">
-		<div class="featured-item">
-			<div class="block">
-				<div class="block-title">
-					<h1>About Us</h1>
-				</div>
-				<p>blah blah blah</p>
 			</div>
 		</div>
 	</div>

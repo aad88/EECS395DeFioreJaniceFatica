@@ -104,6 +104,11 @@ TEMPLATE_DIC = {
 		'/form',
 		'Search Form - Presents of Mind'
 	),
+	'Results': (
+		'results',
+		'/results',
+		'Query Results - Presents of Mind'
+	),
 	'Logout': (
 		'logout',
 		'/logout',
@@ -282,24 +287,37 @@ def manual_form_template():
 			prev_interests=''
 		)
 	elif request.method == 'POST':
-		info = interests_form.info_from_req(request)
-		print(info)
+		try:
+			interests_form.process_req(request)
+		except Exception:
+			return setup_template(
+				'Manual Form',
+			
+				# template-specific fields
+				submission_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
+				bad_entry=True,
+				prev_age=request.form['age'],
+				prev_gender=request.form['gender'],
+				prev_hometown=request.form['hometown'],
+				prev_interests=request.form['interests']
+			)
 		
+		return redirect_to('Results')
+
+# RESULTS
+@app.route(TEMPLATE_DIC['Results'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
+def results_template():
+	if request.method == 'GET':
 		return setup_template(
-			'Manual Form',
+			'Results',
 			
 			# template-specific fields
-			submission_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
-			bad_entry=True,
-			prev_age=request.form['age'],
-			prev_gender=request.form['gender'],
-			prev_hometown=request.form['hometown'],
-			prev_interests=request.form['interests']
+			dummy = ''
 		)
 
 # LOGOUT
 @app.route(TEMPLATE_DIC['Logout'][TEMPLATE_DIC_PATH_ENTRY])
-def logout_templaten():
+def logout_template():
 	return setup_template(
 		'Logout',
 		

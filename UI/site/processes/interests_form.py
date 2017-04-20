@@ -77,5 +77,8 @@ def info_from_req(req):
 	
 	return info
 
-
+def process_req(req):
+	info = info_from_req(req)
+	
+	# TODO: Machine learning, Amazon piping
 

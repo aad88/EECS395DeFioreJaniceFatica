@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% extends "_wrapper.html" %}
+
+{% block content %}
+	<div class="container">
+		<div class="featured-block">
+			<div class="block">
+				<div class="thumbnail">
+					<div class="caption">
+						<h1>Query Results</h1>
+						<p>This is where we would put our query results... IF WE HAD THEM!!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
