@@ -7,11 +7,13 @@
 			<div class="block">
 				<div class="thumbnail">
 					<div class="caption">
-					<h1>Welcome to Presents of Mind!</h1>
-					{% if not logged_in %}
-						<p>You are currently not logged in. Please log in to start utilizing the full features of this site.</p>
-						<a href={{login_path}} class="btn">Login</a>
-					{% endif %}
+						<h1>Welcome to Presents of Mind!</h1>
+						{% if not logged_in %}
+							<p>You are currently not logged in. Please log in to start utilizing the full features of this site.</p>
+							<a href={{login_path}} class="btn">Login</a>
+						{% endif %}
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="ruler"></div>

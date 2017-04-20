@@ -2,23 +2,13 @@
 import sys
 
 # project imports
-from processes import database, facebook
+from processes import database, facebook, interests_form
 
 # external imports
 try:
 	from flask import Flask, render_template, request, redirect, session, escape
 except ImportError:
 	print("IMPORT ERROR: Need to install Flask via pip")
-	sys.exit(1)
-try:
-	from flask.ext.social import Social
-except ImportError:
-	print("IMPORT ERROR: Need to install Flask-Social via pip")
-	sys.exit(1)
-try:
-	from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
-except ImportError:
-	print("IMPORT ERROR: Need to install Flask-SQLAlchemy via pip")
 	sys.exit(1)
 
 app = Flask(__name__)
@@ -108,6 +98,11 @@ TEMPLATE_DIC = {
 		'search',
 		'/search',
 		'Search - Presents of Mind'
+	),
+	'Manual Form': (
+		'manual_form',
+		'/form',
+		'Search Form - Presents of Mind'
 	),
 	'Logout': (
 		'logout',
@@ -235,7 +230,7 @@ def login_launch_redirect():
 	# TODO: remove
 	login('test', 'test')
 	
-	return facebook.begin_login(FACEBOOK_KEY)
+	return redirect_to('Account')
 
 # FACEBOOK LOGIN LAND
 @app.route(TEMPLATE_DIC['Facebook Login Land'][TEMPLATE_DIC_PATH_ENTRY])
@@ -267,9 +262,40 @@ def search_template():
 		'Search',
 		
 		# template-specific fields
-		facebook_search_path=TEMPLATE_DIC['Search'][TEMPLATE_DIC_PATH_ENTRY],
-		logged_in=index()
+		login_redirect_path=TEMPLATE_DIC['Facebook Logout Launch'][TEMPLATE_DIC_PATH_ENTRY],
+		intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY]
 	)
+
+# MANUAL FORM
+@app.route(TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])
+def manual_form_template():
+	if request.method == 'GET':
+		return setup_template(
+			'Manual Form',
+			
+			# template-specific fields
+			submission_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
+			bad_entry=False,
+			prev_age=None,
+			prev_gender='unspecified',
+			prev_hometown='',
+			prev_interests=''
+		)
+	elif request.method == 'POST':
+		info = interests_form.info_from_req(request)
+		print(info)
+		
+		return setup_template(
+			'Manual Form',
+			
+			# template-specific fields
+			submission_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
+			bad_entry=True,
+			prev_age=request.form['age'],
+			prev_gender=request.form['gender'],
+			prev_hometown=request.form['hometown'],
+			prev_interests=request.form['interests']
+		)
 
 # LOGOUT
 @app.route(TEMPLATE_DIC['Logout'][TEMPLATE_DIC_PATH_ENTRY])
@@ -278,7 +304,7 @@ def logout_templaten():
 		'Logout',
 		
 		# template-specific fields
-		login_redirect_path=TEMPLATE_DIC['Facebook Logout Launch'][TEMPLATE_DIC_PATH_ENTRY]
+		logout_redirect_path=TEMPLATE_DIC['Facebook Logout Launch'][TEMPLATE_DIC_PATH_ENTRY]
 	)
 
 # FACEBOOK LOGOUT LAUNCH
@@ -287,7 +313,7 @@ def logout_launch_redirect():
 	# TODO: remove
 	logout()
 	
-	return facebook.begin_logout(FACEBOOK_KEY)
+	return redirect_to('Login')
 
 # FACEBOOK LOGOUT LAND
 @app.route(TEMPLATE_DIC['Facebook Logout Land'][TEMPLATE_DIC_PATH_ENTRY])
@@ -300,12 +326,6 @@ def logout_land_redirect():
 
 if __name__ == '__main__':
 	app.secret_key = APP_KEY
-	
-	app.config['SOCIAL_FACEBOOK'] = {
-		'consumer_key': FACEBOOK_ID,
-		'consumer_secret': FACEBOOK_SECRET
-	}
-	app.config['SECURITY_POST_LOGIN'] = '/profile'
 	
 	app.run()
 

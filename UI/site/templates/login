@@ -2,20 +2,66 @@
 {% extends "_wrapper.html" %}
 
 {% block content %}
-	<script src="static/js/fb_login.js"></script>
-	
-	
-	<fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
-	
 	<div class="container">
 		<div class="featured-block">
 			<div class="block">
 				<div class="thumbnail">
 					<div class="caption">
-					<h1>Login via Facebook</h1>
-					<p>In order to use this service, you must log in via your Facebook account.</p>
-					<p>Click the button below to be redirected to Facebook's login page.</p>
-					<a href={{login_redirect_path}} class="btn">Go to Facebook</a>
+						<h1>Login via Facebook</h1>
+						<p>In order to use this service, you must log in via your Facebook account.</p>
+						<p>Click the button below to be redirected to Facebook's login page.</p>
+						<a href={{login_redirect_path}} class="btn">Go to Facebook</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="featured-block">
+			<div class="block">
+				<div class="thumbnail">
+					<div class="caption">
+						<div class="row">
+							<div class="col-md-12">
+								<h1>Log In</h1>
+								<p>Please use the form below to log in.</p>
+							</div>
+						</div>
+						<hr />
+						<form action={{page_path}} method="POST">
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Username:
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="text" name="username">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Password:
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="password" name="password">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6"></div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="submit" value="ENTER">
+								</div>
+							</div>
+						</form>
+						{% if bad_entry %}
+							<br>
+							<div class="row">
+								<div class="col-md-12">
+									The username/password combination was incorrect.
+								</div>
+							</div>
+						{% endif %}
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
