@@ -1,5 +1,7 @@
 from processes import database
 
 database.connect_with_cred_file('db_creds.txt')
-print(database.get_key('fb_app_secret'))
+#database.create_search('Zanice', 'Older')
+#database.create_search('Zanice', 'Newer')
+print(database.most_recent_search('Zanice'))
 

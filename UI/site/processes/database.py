@@ -1,4 +1,5 @@
 # native imports
+import datetime
 import sys
 
 # project imports
@@ -62,24 +63,22 @@ def construct_query(template, *args):
 
 def insert_query(query_template, session, *args):
 	query = construct_query(query_template, *args)
-	try:
-		session.execute(query)
-		session.commit()
-	except Exception:
-		session.rollback()
-		raise Exception
+	session.execute(query)
+	session.commit()
+	#try:
+	#	session.execute(query)
+	#	session.commit()
+	#except Exception:
+	#	session.rollback()
+	#	raise Exception
 
 def select_query(query_template, session, *args):
 	query = construct_query(query_template, *args)
 	return session.execute(query).fetchall()
 
-# TODO: Hash function for passwords
 def hash_password(password):
 	return hash(password)
 
-# TODO: Sanitize direct query input values, to protect against injection
-def sanitize(val):
-	return val
 
 # -------------------------------
 # QUERIES - GET / UPDATE KEY INFO
@@ -109,6 +108,8 @@ INSERT INTO
 	users
 VALUES (
 	'{}',
+	'{}',
+	'{}',
 	'{}'
 )
 ;
@@ -116,7 +117,7 @@ VALUES (
 
 def create_user(username, password):
 	password = hash_password(password)
-	insert_query(CREATE_USER_QUERY, SESSION, username, password)
+	insert_query(CREATE_USER_QUERY, SESSION, username, password, datetime.datetime.now(), datetime.datetime.now())
 
 USER_EXISTS_QUERY = """
 SELECT
@@ -152,6 +153,63 @@ def is_valid_login(username, password):
 	result_int = int(result[0][0])
 	return result_int is 1
 
+# ------------------
+# QUERIES - SEARCHES
+# ------------------
+
+NEXT_SEARCH_ID_QUERY = """
+SELECT
+	max(s.id)
+FROM
+	searches AS s
+;
+"""
+
+def next_search_id():
+	result = select_query(NEXT_SEARCH_ID_QUERY, SESSION)
+	result = result[0][0]
+	
+	result_int = 0 if result is None else int(result)
+	return result_int + 1
+
+CREATE_SEARCH_QUERY = """
+INSERT INTO
+	searches
+VALUES (
+	{},
+	'{}',
+	'{}',
+	'{}'
+)
+;
+"""
+
+def create_search(username, label):
+	insert_query(CREATE_SEARCH_QUERY, SESSION, next_search_id(), username, label, datetime.datetime.now())
+
+MOST_RECENT_SEARCH_QUERY = """
+SELECT
+	s.id, s.label, s.timestamp
+FROM
+	searches AS s
+WHERE
+	s.username = '{}'
+AND s.timestamp = (
+	SELECT
+		max(s2.timestamp)
+	FROM
+		searches AS s2
+	WHERE
+		s2.username = '{}'
+)
+;
+"""
+
+def most_recent_search(username):
+	result = select_query(MOST_RECENT_SEARCH_QUERY, SESSION, username, username)
+	
+	return result
+
 # ---------------
 # DATABASE TABLES
 # ---------------
@@ -167,4 +225,16 @@ class User(BASE):
 	password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
 	created = sqlalchemy.Column(sqlalchemy.DateTime)
 	last_login = sqlalchemy.Column(sqlalchemy.DateTime)
+
+class Search(BASE):
+	__tablename__ = 'searches'
+	id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+	username = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey('users.username'), nullable=False)
+	label = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+	timestamp = sqlalchemy.Column(sqlalchemy.DateTime)
+
+class SearchIdea(BASE):
+	__tablename__ = 'search_ideas'
+	id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('searches.id'), primary_key=True)
+	name = sqlalchemy.Column(sqlalchemy.String, primary_key=True)
 

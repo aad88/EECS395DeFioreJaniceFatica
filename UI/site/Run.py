@@ -373,7 +373,7 @@ def results_template():
 			'Results',
 			
 			# template-specific fields
-			dummy = ''
+			results=database.most_recent_search(pom_account.index())
 		)
 
 # LOGOUT
