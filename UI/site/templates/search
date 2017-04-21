@@ -3,30 +3,28 @@
 
 {% block content %}
 	<div class="container">
+		<br>
+		<h2>Search for Gift Ideas</h2>
+		<br>
+		<div class="ruler"></div>
 		<div class="featured-block">
 			<div class="block">
 				<div class="thumbnail">
 					<div class="caption">
-						<h1>Search for Gift Ideas</h1>
-					</div>
-					<div class="ruler"></div>
-					<div class="caption">
-						<h1>Search Via Facebook</h1>
+						<h1>Search via Facebook</h1>
 						{% if logged_in %}
-							<p>Please enter the Facebook username below of the person you want to search gift ideas for:</p>
+							<p>Start a Facebook search by entering the Facebook username below of the person you want to search gift ideas for:</p>
 							<form action={{intermediate_search_path}} method="POST">
 								<input type="text" name="username">
 								<input type="submit" value="ENTER">
 							</form>
 						{% else %}
-							<p>This feature is not available when you are not logged in. Please log in in order to use this feature.</p>
+							<p>This feature is not available when you are not logged in via Facebook. Please log into Facebook in order to use this feature.</p>
 							<a href={{login_redirect_path}} class="btn">Go to Login</a>
 						{% endif %}
-					</div>
-					<div class="ruler"></div>
-					<div class="caption">
-						<h1>Search Manually</h1>
-						<p>Description</p>
+						<hr />
+						<h1>Search via Manual Form</h1>
+						<p>Fill out information about the person you're searching for gift ideas for by using the link below:</p>
 						<a href={{intermediate_search_path}} class="btn">Start Manual Search</a>
 					</div>
 				</div>

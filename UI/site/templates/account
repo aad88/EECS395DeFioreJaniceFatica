@@ -4,17 +4,11 @@
 {% block content %}
 	{% if username %}
 		<div class="container">
-			<div class="featured-block">
-				<div class="block">
-					<div class="block-title">
-						<h1>{{username}}'s Account</h1>
-					</div>
-					<p>Welcome back, {{username}}! Here are some details pertaining to your account:</p>
-				</div>
-			</div>
+			<br>
+			<h2>{{username}}'s Account</h2>
+			<p>Welcome back, {{username}}! Here are some details pertaining to your account:</p>
 			<div class="ruler"></div>
 		</div>
-		
 		<div class="container">
 			<div class="featured-item">
 				<div class="block">

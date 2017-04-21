@@ -3,12 +3,16 @@
 
 {% block content %}
 	<div class="container">
+		<br>
+		<h2>Query Results</h2>
+		<br>
+		<div class="ruler"></div>
 		<div class="featured-block">
 			<div class="block">
 				<div class="thumbnail">
 					<div class="caption">
-						<h1>Query Results</h1>
-						<p>This is where we would put our query results... IF WE HAD THEM!!</p>
+						<h1>Potential Gift Ideas</h1>
+						<p>Based on the information provided, here is a list of potential gift ideas we think may be good:</p>
 					</div>
 				</div>
 			</div>

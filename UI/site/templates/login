@@ -3,6 +3,10 @@
 
 {% block content %}
 	<div class="container">
+		<br>
+		<h2>Login</h2>
+		<br>
+		<div class="ruler"></div>
 		<div class="featured-block">
 			<div class="block">
 				<div class="thumbnail">
@@ -11,24 +15,10 @@
 						<p>In order to use this service, you must log in via your Facebook account.</p>
 						<p>Click the button below to be redirected to Facebook's login page.</p>
 						<a href={{login_redirect_path}} class="btn">Go to Facebook</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="container">
-		<div class="featured-block">
-			<div class="block">
-				<div class="thumbnail">
-					<div class="caption">
-						<div class="row">
-							<div class="col-md-12">
-								<h1>Login via Presents of Mind</h1>
-								<p>Alternatively, you can log in through an account created with Presents of Mind. A Presents of Mind account is not linked with your Facebook account, but can still be used to keep track of past searches you've performed.</p>
-								<p>Enter your login information below, or register for an account if you do not have an account.
-							</div>
-						</div>
 						<hr />
+						<h1>Login via Presents of Mind</h1>
+						<p>Alternatively, you can log in through an account created with Presents of Mind. A Presents of Mind account is not linked with your Facebook account, but can still be used to keep track of past searches you've performed.</p>
+						<p>Enter your login information below, or register for an account if you do not have an account.</p>
 						<form action={{page_path}} method="POST">
 							<div class="row">
 								<div class="col-md-3 col-sm-6 col-xs-6">

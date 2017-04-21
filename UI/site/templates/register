@@ -3,11 +3,15 @@
 
 {% block content %}
 	<div class="container">
+		<br>
+		<h2>Register for an Account</h2>
+		<br>
+		<div class="ruler"></div>
 		<div class="featured-block">
 			<div class="block">
 				<div class="thumbnail">
 					<div class="caption">
-						<h1>Register for an Account</h1>
+						<h1>Registration Form</h1>
 						<p>Please use the form below to register for an account for Presents of Mind.</p>
 						<hr />
 						<form action={{page_path}} method="POST">

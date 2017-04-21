@@ -3,18 +3,30 @@
 
 {% block content %}
 	<div class="container">
+		<br>
+		<h2>Manual Form</h2>
+		<br>
+		<div class="ruler"></div>
 		<div class="featured-block">
 			<div class="block">
 				<div class="thumbnail">
 					<div class="caption">
 						<div class="row">
 							<div class="col-md-12">
-								<h1>Manual Search</h1>
 								<p>Please use the form below to fill in information about the person you want to search for gift ideas for.</p>
 							</div>
 						</div>
-						<hr />
 						<form id="form" action={{submission_path}} method="POST">
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Name:<br>
+									&emsp;(to label the search)
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="text" name="name" {% if prev_name %}value={{prev_name}}{% endif %}>
+								</div>
+							</div>
+							<hr />
 							<div class="row">
 								<div class="col-md-3 col-sm-6 col-xs-6">
 									&emsp;Age:

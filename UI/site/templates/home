@@ -5,24 +5,17 @@
 	<div class="container">
 		<br>
 		<h2>Welcome to Presents of Mind!</h2>
-		{% if not logged_in %}
-			<div class="featured-block">
-				<div class="block">
-					<div class="thumbnail">
-						<div class="caption">
-							<p>You are currently not logged in. Please log in to start utilizing the full features of this site.</p>
-							<a href={{login_path}} class="btn">Login</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		{% endif %}
 		<br>
 		<div class="ruler"></div>
 		<div class="featured-block">
 			<div class="block">
 				<div class="thumbnail">
 					<div class="caption">
+						{% if not logged_in %}
+							<p>You are currently not logged in. Please log in to start utilizing the full features of this site.</p>
+							<a href={{login_path}} class="btn">Login</a>
+						<hr />
+						{% endif %}
 						<h1>About Us</h1>
 						<p>This site is a Senior Project web application developed by Alex DeFiore, Alexis Fatica, and Zachary Janice.</p>
 						<p>Ever had problems coming up with gift ideas for someone you know? Whether it's for lack of inspiration or too many options to choose from, giving gifts can be hard. Our goal is to aid in the process of choosing gift ideas for specific individuals. Using Facebook as a source of basic information about the person you're in need of a gift for - or entering the information in yourself - will allow us to retrieve many ideas for you to consider. These ideas will hopefully provide a starting point for you in your search, if not giving you the perfect gift idea altogether! For those who are instead in search for confirmation for the right gift idea, the same gift idea search is backed by machine learning with past examples, which will help to narrow suggestions down based on gifts given in the past.</p>
