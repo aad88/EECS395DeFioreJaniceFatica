@@ -23,7 +23,7 @@
 									&emsp;(to label the search)
 								</div>
 								<div class="col-md-3 col-sm-6 col-xs-6">
-									<input type="text" name="name" {% if prev_name %}value={{prev_name}}{% endif %} required>
+									<input type="text" name="label" {% if prev_label %}value={{prev_label}}{% endif %} required>
 								</div>
 							</div>
 							<hr />

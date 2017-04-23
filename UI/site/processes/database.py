@@ -185,9 +185,71 @@ VALUES (
 """
 
 def create_search(username, label):
-	insert_query(CREATE_SEARCH_QUERY, SESSION, next_search_id(), username, label, datetime.datetime.now())
+	search_id = next_search_id()
+	insert_query(CREATE_SEARCH_QUERY, SESSION, search_id, username, label, datetime.datetime.now())
+	
+	return search_id
 
-MOST_RECENT_SEARCH_QUERY = """
+CREATE_SEARCH_IDEA_QUERY = """
+INSERT INTO
+	search_ideas
+VALUES (
+	{},
+	'{}'
+)
+;
+"""
+
+def create_search_idea(search_id, name):
+	insert_query(CREATE_SEARCH_IDEA_QUERY, SESSION, search_id, name)
+
+SEARCH_IDEAS_QUERY = """
+SELECT
+	si.name
+FROM
+	search_ideas AS si
+WHERE
+	si.id = {}
+;
+"""
+
+def get_search_ideas(id):
+	result = select_query(SEARCH_IDEAS_QUERY, SESSION, id)
+	if len(result) is 0:
+		return None
+	
+	ideas = []
+	for item in result:
+		ideas.append(item[0])
+	
+	return ideas
+
+SEARCH_QUERY = """
+SELECT
+	s.username, s.label, s.timestamp
+FROM
+	searches AS s
+WHERE
+	s.id = {}
+;
+"""
+
+def get_search(id):
+	result = select_query(SEARCH_QUERY, SESSION, id)
+	if len(result) is 0:
+		return None
+	result = result[0]
+	
+	search = {}
+	search['id'] = id
+	search['username'] = result[0]
+	search['label'] = result[1]
+	search['timestamp'] = result[2]
+	search['ideas'] = get_search_ideas(id)
+	
+	return search
+
+MOST_RECENT_USER_SEARCH_QUERY = """
 SELECT
 	s.id, s.label, s.timestamp
 FROM
@@ -205,10 +267,88 @@ AND s.timestamp = (
 ;
 """
 
-def most_recent_search(username):
-	result = select_query(MOST_RECENT_SEARCH_QUERY, SESSION, username, username)
+def get_most_recent_search(username):
+	result = select_query(MOST_RECENT_USER_SEARCH_QUERY, SESSION, username, username)
+	if len(result) is 0:
+		return None
+	result = result[0]
 	
-	return result
+	search = {}
+	search['id'] = result[0]
+	search['username'] = username
+	search['label'] = result[1]
+	search['timestamp'] = result[2]
+	search['ideas'] = get_search_ideas(result[0])
+	
+	return search
+
+SEARCH_IDEAS_FOR_USER_QUERY = """
+SELECT
+	si.id, s.label, si.name
+FROM (
+		search_ideas AS si
+	JOIN
+		searches AS s
+	ON
+		si.id = s.id
+)
+WHERE
+	s.username = '{}'
+;
+"""
+
+def get_search_ideas_for_user(username):
+	result = select_query(SEARCH_IDEAS_FOR_USER_QUERY, SESSION, username)
+	if len(result) is 0:
+		return None
+	
+	ideas = []
+	for item in result:
+		idea = {}
+		idea['search_id'] = item[0]
+		idea['search_label'] = item[1]
+		idea['name'] = item[2]
+		
+		ideas.append(idea)
+	
+	return ideas
+
+SEARCHES_FOR_USER_QUERY = """
+SELECT
+	s.id, s.label, s.timestamp
+FROM
+	searches AS s
+WHERE
+	s.username = '{}'
+ORDER BY s.timestamp DESC
+;
+"""
+
+def get_searches_for_user(username):
+	result = select_query(SEARCHES_FOR_USER_QUERY, SESSION, username)
+	if len(result) is 0:
+		return None
+	
+	ideas = get_search_ideas_for_user(username)
+	
+	searches = []
+	for item in result:
+		search = {}
+		search['id'] = item[0]
+		search['username'] = username
+		search['label'] = item[1]
+		search['timestamp'] = item[2]
+		
+		search_ideas = []
+		current_search_id = search['id']
+		for idea in ideas:
+			if idea['search_id'] is current_search_id:
+				search_ideas.append(idea['name'])
+		search['ideas'] = search_ideas
+		
+		searches.append(search)
+	
+	return searches
 
 # ---------------
 # DATABASE TABLES

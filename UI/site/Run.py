@@ -311,7 +311,7 @@ def account_template():
 	
 	if pom_account.index():
 		username = pom_account.index()
-		past_searches = ['Alex', 'Lexi', 'Zach']
+		past_searches = database.get_searches_for_user(username)
 	
 	return setup_template(
 		'Account',
@@ -342,14 +342,18 @@ def manual_form_template():
 			# template-specific fields
 			submission_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
 			bad_entry=False,
+			prev_label='',
 			prev_age=None,
 			prev_gender='unspecified',
 			prev_hometown='',
 			prev_interests=''
 		)
 	elif request.method == 'POST':
+		#username = pom_account.index()
+		#interests_form.process_req(username, request)
 		try:
-			interests_form.process_req(request)
+			username = pom_account.index()
+			interests_form.process_req(username, request)
 		except Exception:
 			return setup_template(
 				'Manual Form',
@@ -357,6 +361,7 @@ def manual_form_template():
 				# template-specific fields
 				submission_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
 				bad_entry=True,
+				prev_label = request.form['label'],
 				prev_age=request.form['age'],
 				prev_gender=request.form['gender'],
 				prev_hometown=request.form['hometown'],
@@ -369,11 +374,15 @@ def manual_form_template():
 @app.route(TEMPLATE_DIC['Results'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
 def results_template():
 	if request.method == 'GET':
+		if pom_account.index():
+			username = pom_account.index()
+			most_recent_search = database.get_most_recent_search(username)
+		
 		return setup_template(
 			'Results',
 			
 			# template-specific fields
-			results=database.most_recent_search(pom_account.index())
+			results=most_recent_search
 		)
 
 # LOGOUT

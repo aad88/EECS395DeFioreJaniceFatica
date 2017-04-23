@@ -22,12 +22,21 @@
 								<div class="panel-heading accordion-caret">
 									<h4 class="panel-title">
 										<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href={{"#collapse"+(loop.index|string)}}>
-											{{search}}
+											{{search['label']}}
 										</a>
 									</h4>
 								</div>
 								<div id={{"collapse"+(loop.index|string)}} class="panel-collapse collapse">
-									<div class="panel-body">No information about this search is available at this time.</div>
+									<div class="panel-body">
+										{% if search['ideas'] %}
+											Gift ideas resulting from this search:
+											{% for idea in search['ideas'] %}
+												<br>-- {{idea}}
+											{% endfor %}
+										{% else %}
+											Sorry, we could not find any gift ideas associated with this search.
+										{% endif %}
+									</div>
 								</div>
 							</div>
 						{% endfor %}

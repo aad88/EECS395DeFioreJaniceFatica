@@ -12,7 +12,14 @@
 				<div class="thumbnail">
 					<div class="caption">
 						<h1>Potential Gift Ideas</h1>
-						<p>Based on the information provided, here is a list of potential gift ideas we think may be good:</p>
+							{% if results['ideas'] %}
+								Based on the information provided, here is a list of potential gift ideas we think may be good:<br>
+									{% for idea in results['ideas'] %}
+										<br>-- {{idea}}
+									{% endfor %}
+							{% else %}
+								<p>Sorry, our search did not yield any gift idea results.</p>
+							{% endif %}
 					</div>
 				</div>
 			</div>

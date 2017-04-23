@@ -2,6 +2,7 @@
 import string
 
 # project imports
+import database
 
 # external imports
 try:
@@ -19,6 +20,14 @@ INTERESTS_WHITESPACE_TO_REMOVE = string.whitespace.replace('\n', '').replace(' '
 # -------------
 # PARSE METHODS
 # -------------
+
+def parse_label_info(req):
+	# pull the label information from the form
+	label = req.form['label']
+	if label is None:
+		return ''
+	
+	return label
 
 def parse_age_info(req):
 	# pull the age information as an int from the form
@@ -70,6 +79,7 @@ def parse_interests_info(req):
 def info_from_req(req):
 	info = {}
 	
+	info['label'] = parse_label_info(req)
 	info['age'] = parse_age_info(req)
 	info['gender'] = parse_gender_info(req)
 	info['hometown'] = parse_hometown_info(req)
@@ -77,8 +87,9 @@ def info_from_req(req):
 	
 	return info
 
-def process_req(req):
+def process_req(username, req):
 	info = info_from_req(req)
 	
+	database.create_search(username, info['label'])
 	# TODO: Machine learning, Amazon piping
 
