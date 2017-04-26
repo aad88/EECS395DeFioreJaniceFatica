@@ -2,7 +2,7 @@
 import sys
 
 # project imports
-from processes import database, facebook, interests_form, pom_account, account
+from processes import database, account, search_query
 
 # external imports
 try:
@@ -146,7 +146,7 @@ TEMPLATE_DIC_PAGE_HEAD_ENTRY = 2
 def create_nav_bar():
 	nav_bar = []
 	
-	if pom_account.index():
+	if account.index():
 		items = NAV_BAR_LOGGED_IN_ITEMS
 	else:
 		items = NAV_BAR_ITEMS
@@ -171,7 +171,7 @@ def setup_template(template, **kw_args):
 		current_nav=template,
 		
 		# login status arguments
-		logged_in=pom_account.index(),
+		logged_in=account.index(),
 		
 		# any other keyword arguments for Jinja
 		**kw_args
@@ -222,15 +222,9 @@ def login_launch_process():
 	access_token = request.json['accessToken']
 	first_name = request.json['firstName']
 	
-	print("{} {} {}".format(user_id, access_token, first_name))
-	
 	account.session_login(user_id, access_token, first_name)
 	
 	return "SUCCESS"
-
-# FACEBOOK LOGIN LAND
-#@app.route(TEMPLATE_DIC['Facebook Login Land'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST')
-#def login_l
 
 # ACCOUNT
 @app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY])
@@ -251,7 +245,7 @@ def account_template():
 	)
 
 # SEARCH
-@app.route(TEMPLATE_DIC['Search'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])
+@app.route(TEMPLATE_DIC['Search'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
 def search_template():
 	if request.method == 'GET':
 		return setup_template(
@@ -259,8 +253,7 @@ def search_template():
 			
 			# template-specific fields
 			login_redirect_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
-			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
-			friends=None
+			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY]
 		)
 	elif request.method == 'POST':
 		return setup_template(
@@ -268,8 +261,7 @@ def search_template():
 			
 			# template-specific fields
 			login_redirect_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
-			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
-			friends=request.json['friends']
+			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY]
 		)
 
 # MANUAL FORM
@@ -289,11 +281,11 @@ def manual_form_template():
 			prev_interests=''
 		)
 	elif request.method == 'POST':
-		#username = pom_account.index()
-		#interests_form.process_req(username, request)
+		user_id = account.index()
+		search_query.process_manual_query(user_id, request)
 		try:
-			username = pom_account.index()
-			interests_form.process_req(username, request)
+			user_id = account.index()
+			#interests_form.process_req(user_id, request)
 		except Exception:
 			return setup_template(
 				'Manual Form',
@@ -314,9 +306,9 @@ def manual_form_template():
 @app.route(TEMPLATE_DIC['Results'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
 def results_template():
 	if request.method == 'GET':
-		if pom_account.index():
-			username = pom_account.index()
-			most_recent_search = database.get_most_recent_search(username)
+		if account.index():
+			user_id = account.index()
+			most_recent_search = database.get_most_recent_search(user_id)
 		
 		return setup_template(
 			'Results',

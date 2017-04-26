@@ -2,7 +2,6 @@
 import string
 
 # project imports
-import database
 
 # external imports
 try:
@@ -21,42 +20,42 @@ INTERESTS_WHITESPACE_TO_REMOVE = string.whitespace.replace('\n', '').replace(' '
 # PARSE METHODS
 # -------------
 
-def parse_label_info(req):
+def parse_label_info(form):
 	# pull the label information from the form
-	label = req.form['label']
+	label = form.form['label']
 	if label is None:
 		return ''
 	
 	return label
 
-def parse_age_info(req):
+def parse_age_info(form):
 	# pull the age information as an int from the form
-	age = req.form['age']
+	age = form.form['age']
 	if age == '':
 		age = None
 	else:
 		age = int(age)
 	return age
 
-def parse_gender_info(req):
+def parse_gender_info(form):
 	# pull the gender information from the form
-	gender = str(req.form['gender'])
+	gender = str(form.form['gender'])
 	if gender == 'unspecified':
 		return None
 	
 	return gender
 
-def parse_hometown_info(req):
+def parse_hometown_info(form):
 	# pull the hometown information from the form
-	hometown = str(req.form['hometown'])
+	hometown = str(form.form['hometown'])
 	if hometown == '':
 		return None
 	
 	return hometown
 
-def parse_interests_info(req):
+def parse_interests_info(form):
 	# pull the interests information from the form
-	interests = str(req.form['interests'])
+	interests = str(form.form['interests'])
 	if interests == '':
 		return None
 	
@@ -72,24 +71,18 @@ def parse_interests_info(req):
 	
 	return interest_list
 
-# --------------------------
-# REQUEST PROCESSING METHODS
-# --------------------------
+# ------------------------------
+# FORM REQUEST PROCESSING METHOD
+# ------------------------------
 
-def info_from_req(req):
+def info_from_form(form):
 	info = {}
 	
-	info['label'] = parse_label_info(req)
-	info['age'] = parse_age_info(req)
-	info['gender'] = parse_gender_info(req)
-	info['hometown'] = parse_hometown_info(req)
-	info['interests'] = parse_interests_info(req)
+	info['label'] = parse_label_info(form)
+	info['age'] = parse_age_info(form)
+	info['gender'] = parse_gender_info(form)
+	info['hometown'] = parse_hometown_info(form)
+	info['interests'] = parse_interests_info(form)
 	
 	return info
-
-def process_req(username, req):
-	info = info_from_req(req)
-	
-	database.create_search(username, info['label'])
-	# TODO: Machine learning, Amazon piping
 

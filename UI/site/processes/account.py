@@ -30,6 +30,12 @@ def index():
 def session_login(user_id, access_token, first_name):
 	print(">> RECEIVED LOGIN INFO: <id={} token={}>".format(user_id, access_token))
 	
+	# add/update database entry for this user
+	if database.user_exists(user_id):
+		database.update_user(user_id, access_token, first_name)
+	else:
+		database.create_user(user_id, access_token, first_name)
+	
 	if index():
 		session.pop(SESSION_USER_TAG, None)
 	

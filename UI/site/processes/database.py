@@ -63,12 +63,14 @@ def construct_query(template, *args):
 
 def insert_query(query_template, session, *args):
 	query = construct_query(query_template, *args)
-	try:
-		session.execute(query)
-		session.commit()
-	except Exception:
-		session.rollback()
-		raise Exception
+	session.execute(query)
+	session.commit()
+	#try:
+	#	session.execute(query)
+	#	session.commit()
+	#except Exception:
+	#	session.rollback()
+	#	raise Exception
 
 def select_query(query_template, session, *args):
 	query = construct_query(query_template, *args)
@@ -102,15 +104,26 @@ CREATE_USER_QUERY = """
 INSERT INTO
 	users
 VALUES (
-	{},
+	'{}',
 	'{}',
 	'{}'
 )
 ;
 """
 
-def create_user(id, name, token):
-	insert_query(CREATE_USER_QUERY, SESSION, username, password, datetime.datetime.now(), datetime.datetime.now())
+def create_user(id, token, name):
+	insert_query(CREATE_USER_QUERY, SESSION, id, token, name)
+
+def update_user(id, token, name):
+	user = SESSION.query(User).filter_by(id=id).first()
+	
+	if not user:
+		raise Exception
+	
+	user.token = token
+	user.name = name
+	
+	SESSION.commit()
 
 USER_EXISTS_QUERY = """
 SELECT
@@ -118,7 +131,7 @@ SELECT
 FROM
 	users AS u
 WHERE
-	u.id = {}
+	u.id = '{}'
 ;
 """
 
@@ -127,6 +140,55 @@ def user_exists(id):
 	
 	result_int = int(result[0][0])
 	return result_int is 1
+
+# --------------------
+# QUERIES - GIFT IDEAS
+# --------------------
+
+CREATE_IDEA_QUERY = """
+INSERT INTO
+	ideas
+VALUES (
+	'{}',
+	'{}',
+	'{}',
+	'{}',
+	'{}',
+	{},
+	{}
+)
+;
+"""
+
+def create_idea(id, name, url=None, price=None, image_url=None, image_width=None, image_height=None):
+	insert_query(CREATE_IDEA_QUERY, SESSION, id, name, url, price, image_url, image_width, image_height)
+
+IDEA_QUERY = """
+SELECT
+	i.name, i.url, i.price, i.image_url, i.image_width, i.image_height
+FROM
+	ideas AS i
+WHERE
+	i.id = '{}'
+;
+"""
+
+def get_idea(id):
+	result = select_query(IDEA_QUERY, SESSION, id)
+	if len(result) is 0:
+		return None
+	result = result[0]
+	
+	idea = {}
+	idea['id'] = id
+	idea['name'] = result[0]
+	idea['url'] = result[1]
+	idea['price'] = result[2]
+	idea['image_url'] = result[3]
+	idea['image_width'] = result[4]
+	idea['image_height'] = result[5]
+	
+	return idea
 
 # ------------------
 # QUERIES - SEARCHES
@@ -152,7 +214,7 @@ INSERT INTO
 	searches
 VALUES (
 	{},
-	{},
+	'{}',
 	'{}',
 	'{}'
 )
@@ -230,14 +292,14 @@ SELECT
 FROM
 	searches AS s
 WHERE
-	s.user = {}
+	s.user = '{}'
 AND s.timestamp = (
 	SELECT
 		max(s2.timestamp)
 	FROM
 		searches AS s2
 	WHERE
-		s2.user = {}
+		s2.user = '{}'
 )
 ;
 """
@@ -268,7 +330,7 @@ FROM (
 		si.search_id = s.id
 )
 WHERE
-	s.user = {}
+	s.user = '{}'
 ;
 """
 
@@ -294,7 +356,7 @@ SELECT
 FROM
 	searches AS s
 WHERE
-	s.user = {}
+	s.user = '{}'
 ORDER BY s.timestamp DESC
 ;
 """
@@ -336,14 +398,14 @@ class Key(BASE):
 
 class User(BASE):
 	__tablename__ = 'users'
-	id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-	name = sqlalchemy.Column(sqlalchemy.String)
+	id = sqlalchemy.Column(sqlalchemy.String, primary_key=True)
 	token = sqlalchemy.Column(sqlalchemy.Text)
+	name = sqlalchemy.Column(sqlalchemy.String)
 
 class Idea(BASE):
 	__tablename__ = 'ideas'
-	id = sqlalchemy.Column(sqlalchemy.String, primary_key=True)
-	name = sqlalchemy.Column(sqlalchemy.String)
+	id = sqlalchemy.Column(sqlalchemy.String, primary_key=True, nullable=False)
+	name = sqlalchemy.Column(sqlalchemy.String, nullable=False)
 	url = sqlalchemy.Column(sqlalchemy.String)
 	price = sqlalchemy.Column(sqlalchemy.String)
 	image_url = sqlalchemy.Column(sqlalchemy.String)
@@ -353,7 +415,7 @@ class Idea(BASE):
 class Search(BASE):
 	__tablename__ = 'searches'
 	id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-	user = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'), nullable=False)
+	user = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey('users.id'), nullable=False)
 	label = sqlalchemy.Column(sqlalchemy.String, nullable=False)
 	timestamp = sqlalchemy.Column(sqlalchemy.DateTime)
 
