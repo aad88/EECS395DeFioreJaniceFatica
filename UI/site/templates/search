@@ -11,8 +11,8 @@
 			<div class="block">
 				<div class="thumbnail">
 					<div class="caption">
-						<h1>Search via Facebook</h1>
 						{% if logged_in %}
+							<h1>Search via Facebook</h1>
 							<p>Start a Facebook search by entering the Facebook username below of the person you want to search gift ideas for:</p>
 							<form action={{intermediate_search_path}} method="POST">
 								<input type="text" name="username">
@@ -23,14 +23,14 @@
 							<br>
 							<br>
 							<p id="friend_text">Click the button above to grab a list of friends you can search for.</p>
+							<hr />
+							<h1>Search via Manual Form</h1>
+							<p>Fill out information about the person you're searching for gift ideas for by using the link below:</p>
+							<a href={{intermediate_search_path}} class="btn">Start Manual Search</a>
 						{% else %}
 							<p>This feature is not available when you are not logged in via Facebook. Please log into Facebook in order to use this feature.</p>
 							<a href={{login_redirect_path}} class="btn">Go to Login</a>
 						{% endif %}
-						<hr />
-						<h1>Search via Manual Form</h1>
-						<p>Fill out information about the person you're searching for gift ideas for by using the link below:</p>
-						<a href={{intermediate_search_path}} class="btn">Start Manual Search</a>
 					</div>
 				</div>
 			</div>

@@ -232,7 +232,7 @@ def account_template():
 	user_id = None
 	past_searches = None
 	
-	if pom_account.index():
+	if account.index():
 		user_id = account.index()
 		past_searches = database.get_searches_for_user(user_id)
 	
@@ -272,6 +272,7 @@ def manual_form_template():
 			'Manual Form',
 			
 			# template-specific fields
+			login_redirect_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
 			submission_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
 			bad_entry=False,
 			prev_label='',
@@ -281,16 +282,17 @@ def manual_form_template():
 			prev_interests=''
 		)
 	elif request.method == 'POST':
-		user_id = account.index()
-		search_query.process_manual_query(user_id, request)
+		#user_id = account.index()
+		#search_query.process_manual_query(user_id, request)
 		try:
 			user_id = account.index()
-			#interests_form.process_req(user_id, request)
+			search_query.process_manual_query(user_id, request)
 		except Exception:
 			return setup_template(
 				'Manual Form',
 			
 				# template-specific fields
+				login_redirect_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
 				submission_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
 				bad_entry=True,
 				prev_label = request.form['label'],
@@ -309,11 +311,14 @@ def results_template():
 		if account.index():
 			user_id = account.index()
 			most_recent_search = database.get_most_recent_search(user_id)
+		else:
+			most_recent_search = None
 		
 		return setup_template(
 			'Results',
 			
 			# template-specific fields
+			login_redirect_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
 			results=most_recent_search
 		)
 

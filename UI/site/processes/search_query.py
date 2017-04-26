@@ -14,8 +14,10 @@ def process_query(user_id, info):
 	q_hometown = info['hometown']
 	q_interests = info['interests']
 	
-	# create a record of this search query
-	database.create_search(user_id, q_label)
+	# create a record of this search query, if not anonymous
+	search_id = None
+	if user_id is not None:
+		search_id = database.create_search(user_id, q_label)
 	
 	# TODO: MACHINE LEARNING IMPLEMENTATION HERE
 	
@@ -28,8 +30,9 @@ def process_query(user_id, info):
 		#TODO
 		
 		# enter in connection to this search
-		#TODO
-		pass
+		if search_id is not None:
+			#TODO
+			pass
 
 def process_manual_query(user_id, form):
 	info = interests_form.info_from_form(form)

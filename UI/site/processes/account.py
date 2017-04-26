@@ -2,7 +2,6 @@
 
 # project imports
 import database
-import sanitation
 
 # external imports
 try:
