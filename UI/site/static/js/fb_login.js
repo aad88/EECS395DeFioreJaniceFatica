@@ -2,12 +2,12 @@
 
 function FBLogin() {
 	FB.login(function (response) {
-		var obj = {
+		var data_obj = {
 			userID: response.authResponse.userID,
 			accessToken: response.authResponse.accessToken,
 			firstName: null
 		};
-		var data_json = JSON.stringify(obj);
+		var data_json = JSON.stringify(data_obj);
 		$.ajax({
 			url: "/login/facebook",
 			type: "POST",
@@ -15,7 +15,7 @@ function FBLogin() {
 			async: false,
 			contentType: "application/json",
 			success: function (data, textStatus, jqXHR) {
-				if (data == "AUTHENTICATED") {
+				if (data == "SUCCESS") {
 					location.replace("http://localhost:5000/account");
 				}
 			}
@@ -27,7 +27,22 @@ function FBLogin() {
 }
 
 function FBLogout() {
-	FB.logout(function (response) {});
+	FB.logout(function (response) {
+		var data_obj = {};
+		var data_json = JSON.stringify(data_obj);
+		$.ajax({
+			url: "/logout/facebook",
+			type: "POST",
+			data: data_json,
+			async: false,
+			contentType: "application/json",
+			success: function (data, textStatus, jqXHR) {
+				if (data == "SUCCESS") {
+					location.replace("http://localhost:5000/login");
+				}
+			}
+		});
+	});
 }
 
 function fetchUserID() {
@@ -46,12 +61,12 @@ function checkFBLogin() {
 	FB.getLoginStatus(function (response) {
 		if (response.status ==='connected') {
 			console.log('CONNECTED');
-			var obj = {
+			var data_obj = {
 				userID: response.authResponse.userID,
 				accessToken: response.authResponse.accessToken,
 				firstName: null
 			};
-			var data_json = JSON.stringify(obj);
+			var data_json = JSON.stringify(data_obj);
 			$.ajax({
 				url: "/login/facebook",
 				type: "POST",
@@ -59,7 +74,7 @@ function checkFBLogin() {
 				async: false,
 				contentType: "application/json",
 				success: function (data, textStatus, jqXHR) {
-					if (data == "AUTHENTICATED") {
+					if (data == "SUCCESS") {
 						location.replace("http://localhost:5000/account");
 					}
 				}

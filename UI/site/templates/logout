@@ -11,14 +11,15 @@
 			<div class="block">
 				<div class="thumbnail">
 					<div class="caption">
-					<h1>Logout via Facebook</h1>
-					<p>In order to log out, you must log out via your Facebook account.</p>
-					<p>Click the button below to be redirected to Facebook's logout process.</p>
-					<a href={{logout_redirect_path}} class="btn">Go to Facebook</a>
+						<h1>Logout via Facebook</h1>
+						<p>Click the button below to logout via Facebook.</p>
+						<button type="button" onclick="FBLogout();" class="btn">Go to Facebook</button>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	</div>
+	
+	<script src="static/js/fb_login.js"></script>
 {% endblock %}
 

@@ -212,40 +212,10 @@ def login_template():
 			'Login',
 			
 			# template-specific fields
-			login_redirect_path=TEMPLATE_DIC['Facebook Login Process'][TEMPLATE_DIC_PATH_ENTRY],
-			register_path=TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY],
-			bad_entry=False
+			login_redirect_path=TEMPLATE_DIC['Facebook Login Process'][TEMPLATE_DIC_PATH_ENTRY]
 		)
-	elif request.method == 'POST':
-		username = str(request.form['username'])
-		password = str(request.form['password'])
-		
-		bad_user = not pom_account.is_valid_username(username)
-		bad_pass = not pom_account.is_valid_password(password)
-		
-		if bad_user or bad_pass:
-			return setup_template(
-				'Login',
-				
-				# template-specific fields
-				login_redirect_path=TEMPLATE_DIC['Facebook Login Process'][TEMPLATE_DIC_PATH_ENTRY],
-				register_path=TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY],
-				bad_entry=True
-			)
-		
-		if not pom_account.login(username, password):
-			return setup_template(
-				'Login',
-				
-				# template-specific fields
-				login_redirect_path=TEMPLATE_DIC['Facebook Login Process'][TEMPLATE_DIC_PATH_ENTRY],
-				register_path=TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY],
-				bad_entry=True
-			)
-		
-		return redirect_to('Account')
 
-# FACEBOOK LOGIN LAUNCH
+# FACEBOOK LOGIN PROCESS
 @app.route(TEMPLATE_DIC['Facebook Login Process'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST'])
 def login_launch_process():
 	user_id = request.json['userID']
@@ -256,56 +226,11 @@ def login_launch_process():
 	
 	account.session_login(user_id, access_token, first_name)
 	
-	return "AUTHENTICATED"
+	return "SUCCESS"
 
 # FACEBOOK LOGIN LAND
 #@app.route(TEMPLATE_DIC['Facebook Login Land'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST')
 #def login_l
-
-# REGISTER
-@app.route(TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])
-def register_template():
-	if request.method == 'GET':
-		return setup_template(
-			'Register',
-			
-			# template-specific fields
-			login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
-			attempted_user=None,
-			bad_user=False,
-			bad_pass=False
-		)
-	elif request.method == 'POST':
-		username = str(request.form['username'])
-		password = str(request.form['password'])
-		confirm = str(request.form['password_confirm'])
-		
-		bad_user = not pom_account.is_valid_username(username)
-		bad_pass = not pom_account.is_valid_password(password, confirmation=confirm)
-		
-		if bad_user or bad_pass:
-			return setup_template(
-				'Register',
-				
-				# template-specific fields
-				login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
-				attempted_user=username,
-				bad_user=bad_user,
-				bad_pass=bad_pass
-			)
-		
-		if not pom_account.attempt_create_account(username, password):
-			return setup_template(
-				'Register',
-				
-				# template-specific fields
-				login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
-				attempted_user=username,
-				bad_user=True,
-				bad_pass=False
-			)
-		
-		return redirect_to('Account')
 
 # ACCOUNT
 @app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY])
@@ -399,18 +324,12 @@ def logout_template():
 		logout_redirect_path=TEMPLATE_DIC['Facebook Logout Launch'][TEMPLATE_DIC_PATH_ENTRY]
 	)
 
-# FACEBOOK LOGOUT LAUNCH
+# FACEBOOK LOGOUT PROCESS
 @app.route(TEMPLATE_DIC['Facebook Logout Launch'][TEMPLATE_DIC_PATH_ENTRY])
 def logout_launch_redirect():
-	# TODO: remove
-	pom_account.logout()
+	account.session_logout()
 	
-	return redirect_to('Login')
-
-# FACEBOOK LOGOUT LAND
-@app.route(TEMPLATE_DIC['Facebook Logout Land'][TEMPLATE_DIC_PATH_ENTRY])
-def logout_land_redirect():
-	return redirect_to('Login')
+	return "SUCCESS"
 
 # -------------------------------------
 # MAIN PROCEDURE - START UP APPLICATION
