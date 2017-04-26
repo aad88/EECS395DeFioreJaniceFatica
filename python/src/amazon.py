@@ -13,7 +13,7 @@ def searchByKeyword(keyword, minPrice = -1, maxPrice = -1):
     if (minPrice == -1):
       items = api.item_search('All', Keywords=keyword, ResponseGroup='Medium')
     else:
-      items = api.item_search('All', Keywords=keyword, MinimumPrice=minPrice, MaximumPrice = maxPrice, ResponseGroup='Medium')
+      items = api.item_search('All', Keywords=keyword, MinimumPrice=minPrice, MaximumPrice=maxPrice, ResponseGroup='Medium')
   except AWSError as e:
     print 'Amazon complained about request'
     print e.code
@@ -22,19 +22,24 @@ def searchByKeyword(keyword, minPrice = -1, maxPrice = -1):
   results = []
   for result in items:
     obj = {}
-    obj['Name'] = result.ItemAttributes.Title
-    obj['URL'] = result.DetailPageURL
-    obj['Price'] = result.ItemAttributes.ListPrice.FormattedPrice
-    obj['ImageURL'] = result.SmallImage.URL
-    obj['ImageHeight'] = result.SmallImage.Height
-    obj['ImageWidth'] = result.SmallImage.Width
+    obj['id'] = result.ASIN
+    obj['name'] = result.ItemAttributes.Title
+    obj['url'] = result.DetailPageURL
+    try:
+      obj['price'] = result.ItemAttributes.ListPrice.FormattedPrice
+    except:
+      obj['price'] = None
+    obj['imageurl'] = result.SmallImage.URL
+    obj['imageheight'] = result.SmallImage.Height
+    obj['imagewidth'] = result.SmallImage.Width
     results.append(obj)
+  results = results[:3]
   return results
 
 def searchById(id):
   items = None
   try:
-    items = api.item_search(id, ResponseGroup='Medium')
+    items = api.item_lookup(ItemId=id, ResponseGroup='Medium')
   except AWSError as e:
     print 'Amazon complained about request'
     print e.code
@@ -42,11 +47,16 @@ def searchById(id):
   results = []
   for result in items:
     obj = {}
-    obj['Name'] = result.ItemAttributes.Title
-    obj['URL'] = result.DetailPageURL
-    obj['Price'] = result.ItemAttributes.ListPrice.FormattedPrice
-    obj['ImageURL'] = result.SmallImage.URL
-    obj['ImageHeight'] = result.SmallImage.Height
-    obj['ImageWidth'] = result.SmallImage.Width
+    obj['id'] = result.ASIN
+    obj['name'] = result.ItemAttributes.Title
+    obj['url'] = result.DetailPageURL
+    try:
+      obj['price'] = result.ItemAttributes.ListPrice.FormattedPrice
+    except:
+      obj['price'] = None
+    obj['imageurl'] = result.SmallImage.URL
+    obj['imageheight'] = result.SmallImage.Height
+    obj['imagewidth'] = result.SmallImage.Width
     results.append(obj)
+  results = results[:3]
   return results
