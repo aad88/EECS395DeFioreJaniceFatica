@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+{% extends "_wrapper.html" %}
+
+{% block content %}
+	<div class="container">
+		<br>
+		<h2>Manual Form</h2>
+		<br>
+		<div class="ruler"></div>
+		<div class="featured-block">
+			<div class="block">
+				<div class="thumbnail">
+					<div class="caption">
+						<div class="row">
+							<div class="col-md-12">
+								<p>Please use the form below to fill in information about the person you want to search for gift ideas for.</p>
+							</div>
+						</div>
+						<form id="form" action={{submission_path}} method="POST">
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Name:<br>
+									&emsp;(to label the search)
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="text" name="label" {% if prev_label %}value={{prev_label}}{% endif %} required>
+								</div>
+							</div>
+							<hr />
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Age:
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="number" name="age" min="0" step="1" {% if prev_age %}value={{prev_age}}{% endif %}>
+								</div>
+							</div>
+							<br>
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Gender:
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="radio" name="gender" value="male" {% if prev_gender == 'male' %}checked="checked"{% endif %}> Male<br>
+									<input type="radio" name="gender" value="female" {% if prev_gender == 'female' %}checked="checked"{% endif %}> Female<br>
+									<input type="radio" name="gender" value="other" {% if prev_gender == 'other' %}checked="checked"{% endif %}> Other<br>
+									<input type="radio" name="gender" value="unspecified" {% if prev_gender == 'unspecified' %}checked="checked"{% endif %}> Would rather not specify.
+								</div>
+							</div>
+							<hr />
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Hometown:
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="text" name="hometown" {% if prev_hometown %}value={{prev_hometown}}{% endif %}>
+								</div>
+							</div>
+							<hr />
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;List interests, hobbies, etc.:
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<textarea form="form" name="interests" rows="8">{% if prev_interests %}{{prev_interests}}{% endif %}</textarea>
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									Example Entry
+									<textarea name="interests_ex" rows="7" readonly>Reading&#x0D;Cleveland Cavaliers&#x0D;Metal Music&#x0D;Coffee Mugs</textarea>
+								</div>
+							</div>
+							<br>
+							<br>
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6"></div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="submit" value="ENTER">
+								</div>
+							</div>
+						</form>
+						{% if bad_entry %}
+							<br>
+							<div class="row">
+								<div class="col-md-12">
+									There was a problem submitting the form.
+								</div>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+

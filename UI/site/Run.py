@@ -246,12 +246,15 @@ def login_template():
 		return redirect_to('Account')
 
 # FACEBOOK LOGIN LAUNCH
-@app.route(TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY])
+@app.route(TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST'])
 def login_launch_redirect():
-	# TODO: remove
-	login('test', 'test')
+	user_id = request.json['userID']
+	access_token = request.json['accessToken']
 	
-	return redirect_to('Account')
+	print("USER ID: {}".format(user_id))
+	print("ACCESS TOKEN: {}".format(access_token))
+	
+	return "11"
 
 # FACEBOOK LOGIN LAND
 @app.route(TEMPLATE_DIC['Facebook Login Land'][TEMPLATE_DIC_PATH_ENTRY])
