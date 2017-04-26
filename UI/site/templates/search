@@ -18,6 +18,11 @@
 								<input type="text" name="username">
 								<input type="submit" value="ENTER">
 							</form>
+							<br>
+							<button type="button" onclick="FBUserFriendList();" class="btn">Check for Friends Available for Search</button>
+							<br>
+							<br>
+							<p id="friend_text">Click the button above to grab a list of friends you can search for.</p>
 						{% else %}
 							<p>This feature is not available when you are not logged in via Facebook. Please log into Facebook in order to use this feature.</p>
 							<a href={{login_redirect_path}} class="btn">Go to Login</a>
@@ -31,5 +36,7 @@
 			</div>
 		</div>
 	</div>
+	
+	<script src="static/js/fb_target.js"></script>
 {% endblock %}
 

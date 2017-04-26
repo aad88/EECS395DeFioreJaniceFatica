@@ -251,15 +251,26 @@ def account_template():
 	)
 
 # SEARCH
-@app.route(TEMPLATE_DIC['Search'][TEMPLATE_DIC_PATH_ENTRY])
+@app.route(TEMPLATE_DIC['Search'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])
 def search_template():
-	return setup_template(
-		'Search',
-		
-		# template-specific fields
-		login_redirect_path=TEMPLATE_DIC['Facebook Logout Launch'][TEMPLATE_DIC_PATH_ENTRY],
-		intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY]
-	)
+	if request.method == 'GET':
+		return setup_template(
+			'Search',
+			
+			# template-specific fields
+			login_redirect_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
+			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
+			friends=None
+		)
+	elif request.method == 'POST':
+		return setup_template(
+			'Search',
+			
+			# template-specific fields
+			login_redirect_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
+			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
+			friends=request.json['friends']
+		)
 
 # MANUAL FORM
 @app.route(TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])

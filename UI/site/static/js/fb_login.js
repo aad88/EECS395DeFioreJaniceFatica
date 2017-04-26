@@ -21,7 +21,7 @@ function FBLogin() {
 			}
 		});
 	}, {
-		scope: 'user_friends',
+		scope: 'user_friends,read_custom_friendlists',
 		return_scopes: true
 	});
 }
@@ -50,15 +50,21 @@ function FBLogout() {
 }
 
 function fetchUserID() {
-	FB.api('/me', function (response) {
-		return response.id;
-	});
+	FB.api(
+		'/me',
+		function (response) {
+			return response.id;
+		}
+	);
 }
 
 function fetchUserName() {
-	FB.api('/me', function (response) {
-		return response.first_name;
-	});
+	FB.api(
+		'/me',
+		function (response) {
+			return response.first_name;
+		}
+	);
 }
 
 function checkFBLogin() {
