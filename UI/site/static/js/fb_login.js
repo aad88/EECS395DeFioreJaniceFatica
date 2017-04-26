@@ -27,21 +27,25 @@ function FBLogin() {
 }
 
 function FBLogout() {
-	FB.logout(function (response) {
-		var data_obj = {};
-		var data_json = JSON.stringify(data_obj);
-		$.ajax({
-			url: "/logout/facebook",
-			type: "POST",
-			data: data_json,
-			async: false,
-			contentType: "application/json",
-			success: function (data, textStatus, jqXHR) {
-				if (data == "SUCCESS") {
-					location.replace("http://localhost:5000/login");
-				}
-			}
-		});
+	FB.getLoginStatus(function (response) {
+		if (response.status === 'connected') {
+			FB.logout(function (response) {
+				var data_obj = {};
+				var data_json = JSON.stringify(data_obj);
+				$.ajax({
+					url: "/logout/facebook",
+					type: "POST",
+					data: data_json,
+					async: false,
+					contentType: "application/json",
+					success: function (data, textStatus, jqXHR) {
+						if (data == "SUCCESS") {
+							location.replace("http://localhost:5000/login");
+						}
+					}
+				});
+			});
+		}
 	});
 }
 
@@ -60,7 +64,6 @@ function fetchUserName() {
 function checkFBLogin() {
 	FB.getLoginStatus(function (response) {
 		if (response.status ==='connected') {
-			console.log('CONNECTED');
 			var data_obj = {
 				userID: response.authResponse.userID,
 				accessToken: response.authResponse.accessToken,

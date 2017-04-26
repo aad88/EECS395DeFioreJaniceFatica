@@ -119,7 +119,7 @@ TEMPLATE_DIC = {
 		'/logout',
 		'Logout via Facebook - Presents of Mind'
 	),
-	'Facebook Logout Launch': (
+	'Facebook Logout Process': (
 		None,
 		'/logout/facebook',
 		None
@@ -321,11 +321,11 @@ def logout_template():
 		'Logout',
 		
 		# template-specific fields
-		logout_redirect_path=TEMPLATE_DIC['Facebook Logout Launch'][TEMPLATE_DIC_PATH_ENTRY]
+		logout_redirect_path=TEMPLATE_DIC['Facebook Logout Process'][TEMPLATE_DIC_PATH_ENTRY]
 	)
 
 # FACEBOOK LOGOUT PROCESS
-@app.route(TEMPLATE_DIC['Facebook Logout Launch'][TEMPLATE_DIC_PATH_ENTRY])
+@app.route(TEMPLATE_DIC['Facebook Logout Process'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST'])
 def logout_launch_redirect():
 	account.session_logout()
 	
