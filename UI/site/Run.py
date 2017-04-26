@@ -51,7 +51,6 @@ APP_KEY = key(APP_KEY_NAME)
 # nav bar listing
 NAV_BAR_ITEMS = (
 	'Home',
-	'Search Anonymously',
 	'Login'
 )
 
@@ -130,9 +129,6 @@ TEMPLATE_DIC = {
 		None
 	)
 }
-
-# template dictionary aliases
-TEMPLATE_DIC['Search Anonymously'] = TEMPLATE_DIC['Search']
 
 # template dictionary entry index constants
 TEMPLATE_DIC_NAME_ENTRY = 0
