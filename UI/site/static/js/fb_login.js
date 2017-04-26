@@ -15,7 +15,7 @@ function FBLogin() {
 			contentType: "application/json",
 			success: function (data, textStatus, jqXHR) {
 				if (data == "11") {
-					location.replace("/");
+					location.replace("http://localhost:5000/");
 				}
 			}
 		});
