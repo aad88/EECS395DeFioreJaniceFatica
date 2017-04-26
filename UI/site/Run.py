@@ -2,7 +2,7 @@
 import sys
 
 # project imports
-from processes import database, facebook, interests_form, pom_account
+from processes import database, facebook, interests_form, pom_account, account
 
 # external imports
 try:
@@ -79,7 +79,7 @@ TEMPLATE_DIC = {
 		'/login',
 		'Login via Facebook - Presents of Mind'
 	),
-	'Facebook Login Launch': (
+	'Facebook Login Process': (
 		None,
 		'/login/facebook',
 		None
@@ -212,7 +212,7 @@ def login_template():
 			'Login',
 			
 			# template-specific fields
-			login_redirect_path=TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY],
+			login_redirect_path=TEMPLATE_DIC['Facebook Login Process'][TEMPLATE_DIC_PATH_ENTRY],
 			register_path=TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY],
 			bad_entry=False
 		)
@@ -228,7 +228,7 @@ def login_template():
 				'Login',
 				
 				# template-specific fields
-				login_redirect_path=TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY],
+				login_redirect_path=TEMPLATE_DIC['Facebook Login Process'][TEMPLATE_DIC_PATH_ENTRY],
 				register_path=TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY],
 				bad_entry=True
 			)
@@ -238,7 +238,7 @@ def login_template():
 				'Login',
 				
 				# template-specific fields
-				login_redirect_path=TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY],
+				login_redirect_path=TEMPLATE_DIC['Facebook Login Process'][TEMPLATE_DIC_PATH_ENTRY],
 				register_path=TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY],
 				bad_entry=True
 			)
@@ -246,20 +246,21 @@ def login_template():
 		return redirect_to('Account')
 
 # FACEBOOK LOGIN LAUNCH
-@app.route(TEMPLATE_DIC['Facebook Login Launch'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST'])
-def login_launch_redirect():
+@app.route(TEMPLATE_DIC['Facebook Login Process'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST'])
+def login_launch_process():
 	user_id = request.json['userID']
 	access_token = request.json['accessToken']
+	first_name = request.json['firstName']
 	
-	print("USER ID: {}".format(user_id))
-	print("ACCESS TOKEN: {}".format(access_token))
+	print("{} {} {}".format(user_id, access_token, first_name))
 	
-	return "11"
+	account.session_login(user_id, access_token, first_name)
+	
+	return "AUTHENTICATED"
 
 # FACEBOOK LOGIN LAND
-@app.route(TEMPLATE_DIC['Facebook Login Land'][TEMPLATE_DIC_PATH_ENTRY])
-def login_land_redirect():
-	return redirect_to('Account')
+#@app.route(TEMPLATE_DIC['Facebook Login Land'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST')
+#def login_l
 
 # REGISTER
 @app.route(TEMPLATE_DIC['Register'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])
@@ -309,18 +310,18 @@ def register_template():
 # ACCOUNT
 @app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY])
 def account_template():
-	username = None
+	user_id = None
 	past_searches = None
 	
 	if pom_account.index():
-		username = pom_account.index()
-		past_searches = database.get_searches_for_user(username)
+		user_id = account.index()
+		past_searches = database.get_searches_for_user(user_id)
 	
 	return setup_template(
 		'Account',
 		
 		# template-specific fields
-		username=username,
+		username=user_id,
 		past_searches=past_searches
 	)
 

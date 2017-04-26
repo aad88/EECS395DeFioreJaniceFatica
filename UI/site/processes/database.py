@@ -63,21 +63,16 @@ def construct_query(template, *args):
 
 def insert_query(query_template, session, *args):
 	query = construct_query(query_template, *args)
-	session.execute(query)
-	session.commit()
-	#try:
-	#	session.execute(query)
-	#	session.commit()
-	#except Exception:
-	#	session.rollback()
-	#	raise Exception
+	try:
+		session.execute(query)
+		session.commit()
+	except Exception:
+		session.rollback()
+		raise Exception
 
 def select_query(query_template, session, *args):
 	query = construct_query(query_template, *args)
 	return session.execute(query).fetchall()
-
-def hash_password(password):
-	return hash(password)
 
 
 # -------------------------------
@@ -107,48 +102,28 @@ CREATE_USER_QUERY = """
 INSERT INTO
 	users
 VALUES (
-	'{}',
-	'{}',
+	{},
 	'{}',
 	'{}'
 )
 ;
 """
 
-def create_user(username, password):
-	password = hash_password(password)
+def create_user(id, name, token):
 	insert_query(CREATE_USER_QUERY, SESSION, username, password, datetime.datetime.now(), datetime.datetime.now())
 
 USER_EXISTS_QUERY = """
 SELECT
-	count(u.username)
+	count(u.id)
 FROM
 	users AS u
 WHERE
-	u.username = '{}'
+	u.id = {}
 ;
 """
 
-def user_exists(username):
-	result = select_query(USER_EXISTS_QUERY, SESSION, username)
-	
-	result_int = int(result[0][0])
-	return result_int is 1
-
-LOGIN_QUERY = """
-SELECT
-	count(u.password)
-FROM
-	users AS u
-WHERE
-	u.username = '{}'
-AND u.password = '{}'
-;
-"""
-
-def is_valid_login(username, password):
-	password = hash_password(password)
-	result = select_query(LOGIN_QUERY, SESSION, username, password)
+def user_exists(id):
+	result = select_query(USER_EXISTS_QUERY, SESSION, id)
 	
 	result_int = int(result[0][0])
 	return result_int is 1
@@ -177,16 +152,16 @@ INSERT INTO
 	searches
 VALUES (
 	{},
-	'{}',
+	{},
 	'{}',
 	'{}'
 )
 ;
 """
 
-def create_search(username, label):
+def create_search(user_id, label):
 	search_id = next_search_id()
-	insert_query(CREATE_SEARCH_QUERY, SESSION, search_id, username, label, datetime.datetime.now())
+	insert_query(CREATE_SEARCH_QUERY, SESSION, search_id, user_id, label, datetime.datetime.now())
 	
 	return search_id
 
@@ -205,11 +180,11 @@ def create_search_idea(search_id, name):
 
 SEARCH_IDEAS_QUERY = """
 SELECT
-	si.name
+	si.idea_id
 FROM
 	search_ideas AS si
 WHERE
-	si.id = {}
+	si.search_id = {}
 ;
 """
 
@@ -226,7 +201,7 @@ def get_search_ideas(id):
 
 SEARCH_QUERY = """
 SELECT
-	s.username, s.label, s.timestamp
+	s.user, s.label, s.timestamp
 FROM
 	searches AS s
 WHERE
@@ -242,7 +217,7 @@ def get_search(id):
 	
 	search = {}
 	search['id'] = id
-	search['username'] = result[0]
+	search['user'] = result[0]
 	search['label'] = result[1]
 	search['timestamp'] = result[2]
 	search['ideas'] = get_search_ideas(id)
@@ -255,27 +230,27 @@ SELECT
 FROM
 	searches AS s
 WHERE
-	s.username = '{}'
+	s.user = {}
 AND s.timestamp = (
 	SELECT
 		max(s2.timestamp)
 	FROM
 		searches AS s2
 	WHERE
-		s2.username = '{}'
+		s2.user = {}
 )
 ;
 """
 
-def get_most_recent_search(username):
-	result = select_query(MOST_RECENT_USER_SEARCH_QUERY, SESSION, username, username)
+def get_most_recent_search(user_id):
+	result = select_query(MOST_RECENT_USER_SEARCH_QUERY, SESSION, user_id, user_id)
 	if len(result) is 0:
 		return None
 	result = result[0]
 	
 	search = {}
 	search['id'] = result[0]
-	search['username'] = username
+	search['user'] = user_id
 	search['label'] = result[1]
 	search['timestamp'] = result[2]
 	search['ideas'] = get_search_ideas(result[0])
@@ -284,21 +259,21 @@ def get_most_recent_search(username):
 
 SEARCH_IDEAS_FOR_USER_QUERY = """
 SELECT
-	si.id, s.label, si.name
+	si.search_id, s.label, si.idea_id
 FROM (
 		search_ideas AS si
 	JOIN
 		searches AS s
 	ON
-		si.id = s.id
+		si.search_id = s.id
 )
 WHERE
-	s.username = '{}'
+	s.user = {}
 ;
 """
 
-def get_search_ideas_for_user(username):
-	result = select_query(SEARCH_IDEAS_FOR_USER_QUERY, SESSION, username)
+def get_search_ideas_for_user(user_id):
+	result = select_query(SEARCH_IDEAS_FOR_USER_QUERY, SESSION, user_id)
 	if len(result) is 0:
 		return None
 	
@@ -307,7 +282,7 @@ def get_search_ideas_for_user(username):
 		idea = {}
 		idea['search_id'] = item[0]
 		idea['search_label'] = item[1]
-		idea['name'] = item[2]
+		idea['idea_id'] = item[2]
 		
 		ideas.append(idea)
 	
@@ -319,23 +294,23 @@ SELECT
 FROM
 	searches AS s
 WHERE
-	s.username = '{}'
+	s.user = {}
 ORDER BY s.timestamp DESC
 ;
 """
 
-def get_searches_for_user(username):
-	result = select_query(SEARCHES_FOR_USER_QUERY, SESSION, username)
+def get_searches_for_user(user_id):
+	result = select_query(SEARCHES_FOR_USER_QUERY, SESSION, user_id)
 	if len(result) is 0:
 		return None
 	
-	ideas = get_search_ideas_for_user(username)
+	ideas = get_search_ideas_for_user(user_id)
 	
 	searches = []
 	for item in result:
 		search = {}
 		search['id'] = item[0]
-		search['username'] = username
+		search['user'] = user_id
 		search['label'] = item[1]
 		search['timestamp'] = item[2]
 		
@@ -343,7 +318,7 @@ def get_searches_for_user(username):
 		current_search_id = search['id']
 		for idea in ideas:
 			if idea['search_id'] is current_search_id:
-				search_ideas.append(idea['name'])
+				search_ideas.append(idea['idea_id'])
 		search['ideas'] = search_ideas
 		
 		searches.append(search)
@@ -361,20 +336,29 @@ class Key(BASE):
 
 class User(BASE):
 	__tablename__ = 'users'
-	username = sqlalchemy.Column(sqlalchemy.String, primary_key=True, unique=True)
-	password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
-	created = sqlalchemy.Column(sqlalchemy.DateTime)
-	last_login = sqlalchemy.Column(sqlalchemy.DateTime)
+	id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+	name = sqlalchemy.Column(sqlalchemy.String)
+	token = sqlalchemy.Column(sqlalchemy.Text)
+
+class Idea(BASE):
+	__tablename__ = 'ideas'
+	id = sqlalchemy.Column(sqlalchemy.String, primary_key=True)
+	name = sqlalchemy.Column(sqlalchemy.String)
+	url = sqlalchemy.Column(sqlalchemy.String)
+	price = sqlalchemy.Column(sqlalchemy.String)
+	image_url = sqlalchemy.Column(sqlalchemy.String)
+	image_width = sqlalchemy.Column(sqlalchemy.Integer)
+	image_height = sqlalchemy.Column(sqlalchemy.Integer)
 
 class Search(BASE):
 	__tablename__ = 'searches'
 	id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-	username = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey('users.username'), nullable=False)
+	user = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'), nullable=False)
 	label = sqlalchemy.Column(sqlalchemy.String, nullable=False)
 	timestamp = sqlalchemy.Column(sqlalchemy.DateTime)
 
 class SearchIdea(BASE):
 	__tablename__ = 'search_ideas'
-	id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('searches.id'), primary_key=True)
-	name = sqlalchemy.Column(sqlalchemy.String, primary_key=True)
+	search_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('searches.id'), primary_key=True)
+	idea_id = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey('ideas.id'), primary_key=True)
 
