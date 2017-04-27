@@ -27,7 +27,7 @@ function FBLogin() {
 			}
 		);
 	}, {
-		scope: 'email,user_friends',
+		scope: 'email,user_friends,user_birthday,user_hometown,user_posts',
 		return_scopes: true
 	});
 }

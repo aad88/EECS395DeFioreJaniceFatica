@@ -14,10 +14,9 @@
 						{% if logged_in %}
 							<h1>Search via Facebook</h1>
 							<p>Start a Facebook search by entering the Facebook username below of the person you want to search gift ideas for:</p>
-							<form action={{intermediate_search_path}} method="POST">
-								<input type="text" name="username">
-								<input type="submit" value="ENTER">
-							</form>
+							<input type="text" id="target_name">
+							<button type="button" onclick="GetFBUserFriendInfo('{{access_token}}');" class="btn">Search</button>
+							<br>
 							<br>
 							<button type="button" onclick="FBUserFriendList('{{access_token}}');" class="btn">Check for Friends Available for Search</button>
 							<br>
