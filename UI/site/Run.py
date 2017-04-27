@@ -83,16 +83,6 @@ TEMPLATE_DIC = {
 		'/login/facebook',
 		None
 	),
-	'Facebook Login Land': (
-		None,
-		'/login/facebook/finished',
-		None
-	),
-	'Register': (
-		'register',
-		'/register',
-		'Register for an Account - Presents of Mind'
-	),
 	'Account': (
 		'account',
 		'/account',
@@ -102,6 +92,11 @@ TEMPLATE_DIC = {
 		'search',
 		'/search',
 		'Search - Presents of Mind'
+	),
+	'Facebook Search Process': (
+		None,
+		'/search/facebook',
+		None
 	),
 	'Manual Form': (
 		'manual_form',
@@ -121,11 +116,6 @@ TEMPLATE_DIC = {
 	'Facebook Logout Process': (
 		None,
 		'/logout/facebook',
-		None
-	),
-	'Facebook Logout Land': (
-		None,
-		'/logout/facebook/finished',
 		None
 	)
 }
@@ -222,7 +212,7 @@ def login_launch_process():
 	
 	account.session_login(user_id, access_token, name)
 	
-	return "SUCCESS"
+	return 'SUCCESS'
 
 # ACCOUNT
 @app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY])
@@ -265,6 +255,15 @@ def search_template():
 			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
 			access_token=account.index_token()
 		)
+
+# FACEBOOK SEARCH PROCESS
+@app.route(TEMPLATE_DIC['Facebook Search Process'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST'])
+def search_launch_process():
+	if request.method == 'POST':
+		user_id = account.index()
+		search_query.process_facebook_query(user_id, request.json)
+		
+		return 'SUCCESS'
 
 # MANUAL FORM
 @app.route(TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])
@@ -340,7 +339,7 @@ def logout_template():
 def logout_launch_redirect():
 	account.session_logout()
 	
-	return "SUCCESS"
+	return 'SUCCESS'
 
 # -------------------------------------
 # MAIN PROCEDURE - START UP APPLICATION

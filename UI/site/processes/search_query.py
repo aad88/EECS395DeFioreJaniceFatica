@@ -1,7 +1,7 @@
 # native imports
 
 # project imports
-import database, interests_form
+import database, facebook, interests_form
 
 # external imports
 
@@ -33,6 +33,11 @@ def process_query(user_id, info):
 		if search_id is not None:
 			#TODO
 			pass
+
+def process_facebook_query(user_id, json):
+	info = facebook.info_from_json(json)
+	
+	#process_query(user_id, info)
 
 def process_manual_query(user_id, form):
 	info = interests_form.info_from_form(form)
