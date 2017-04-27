@@ -4,17 +4,16 @@
 {% block content %}
 	<div class="container">
 		<br>
-		<h2>Login</h2>
+		<h2>Logout</h2>
 		<br>
 		<div class="ruler"></div>
 		<div class="featured-block">
 			<div class="block">
 				<div class="thumbnail">
 					<div class="caption">
-						<h1>Login via Facebook</h1>
-						<p>In order to use this service, you must log in via your Facebook account.</p>
-						<p>Click the button below to be redirected to Facebook's login page.</p>
-						<button type="button" onclick="checkFBLogin();" class="btn">Go to Facebook</button>
+						<h1>Logout via Facebook</h1>
+						<p>Click the button below to logout via Facebook.</p>
+						<button type="button" onclick="FBLogout('{{access_token}}');" class="btn">Go to Facebook</button>
 					</div>
 				</div>
 			</div>
