@@ -4,40 +4,47 @@
 {% block content %}
 	{% if username %}
 		<div class="container">
-			<div class="featured-block">
-				<div class="block">
-					<div class="block-title">
-						<h1>{{username}}'s Account</h1>
-					</div>
-					<p>Welcome back, {{username}}! Here are some details pertaining to your account:</p>
-				</div>
-			</div>
+			<br>
+			<h2>{{username}}'s Account</h2>
+			<p>Welcome back, {{username}}! Here are some details pertaining to your account:</p>
 			<div class="ruler"></div>
 		</div>
-		
 		<div class="container">
 			<div class="featured-item">
 				<div class="block">
 					<div class="block-title">
 						<h1>Past Searches</h1>
 					</div>
-					<p>Here are records we have of previous searches you have performed:</p>
-					<div class="panel-group" id="accordion">
-						{% for search in past_searches %}
-							<div class="panel panel-default">
-								<div class="panel-heading accordion-caret">
-									<h4 class="panel-title">
-										<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-											{{search}}
-										</a>
-									</h4>
+					{% if past_searches %}
+						<p>Here are records we have of previous searches you have performed:</p>
+						<div class="panel-group" id="accordion">
+							{% for search in past_searches %}
+								<div class="panel panel-default">
+									<div class="panel-heading accordion-caret">
+										<h4 class="panel-title">
+											<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href={{"#collapse"+(loop.index|string)}}>
+												{{search['label']}}
+											</a>
+										</h4>
+									</div>
+									<div id={{"collapse"+(loop.index|string)}} class="panel-collapse collapse">
+										<div class="panel-body">
+											{% if search['ideas'] %}
+												Gift ideas resulting from this search:
+												{% for idea in search['ideas'] %}
+													<br>-- {{idea}}
+												{% endfor %}
+											{% else %}
+												Sorry, we could not find any gift ideas associated with this search.
+											{% endif %}
+										</div>
+									</div>
 								</div>
-								<div id="collapseOne" class="panel-collapse collapse">
-									<div class="panel-body">No information about this search is available at this time.</div>
-								</div>
-							</div>
-						{% endfor %}
-					</div>
+							{% endfor %}
+						</div>
+					{% else %}
+						<p>There are no past searches on record for this account.</p>
+					{% endif %}
 				</div>
 			</div>
 		</div>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+{% extends "_wrapper.html" %}
+
+{% block content %}
+	<div class="container">
+		<br>
+		<h2>Login</h2>
+		<br>
+		<div class="ruler"></div>
+		<div class="featured-block">
+			<div class="block">
+				<div class="thumbnail">
+					<div class="caption">
+						<h1>Login via Facebook</h1>
+						<p>In order to use this service, you must log in via your Facebook account.</p>
+						<p>Click the button below to be redirected to Facebook's login page.</p>
+						<a href={{login_redirect_path}} class="btn">Go to Facebook</a>
+						<hr />
+						<h1>Login via Presents of Mind</h1>
+						<p>Alternatively, you can log in through an account created with Presents of Mind. A Presents of Mind account is not linked with your Facebook account, but can still be used to keep track of past searches you've performed.</p>
+						<p>Enter your login information below, or register for an account if you do not have an account.</p>
+						<form action={{page_path}} method="POST">
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Username:
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="text" name="username">
+								</div>
+							</div>
+							<br>
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									&emsp;Password:
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="password" name="password">
+								</div>
+							</div>
+							<br>
+							<br>
+							<div class="row">
+								<div class="col-md-3 col-sm-6 col-xs-6"></div>
+								<div class="col-md-3 col-sm-6 col-xs-6">
+									<input type="submit" value="ENTER">
+								</div>
+							</div>
+						</form>
+						{% if bad_entry %}
+							<br>
+							<div class="row">
+								<div class="col-md-12">
+									The username/password combination was incorrect, or the username/password contained invalid characters.
+								</div>
+							</div>
+						{% endif %}
+						<hr />
+						Don't have an account? <a href={{register_path}}>Register for a Presents of Mind account!</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+{% extends "_wrapper.html" %}
+
+{% block content %}
+	<div class="container">
+		<br>
+		<h2>Query Results</h2>
+		<br>
+		<div class="ruler"></div>
+		<div class="featured-block">
+			<div class="block">
+				<div class="thumbnail">
+					<div class="caption">
+						{% if logged_in %}
+							<h1>Potential Gift Ideas</h1>
+							{% if results['ideas'] %}
+								Based on the information provided, here is a list of potential gift ideas we think may be good:<br>
+									{% for idea in results['ideas'] %}
+										<br>-- {{idea}}
+									{% endfor %}
+							{% else %}
+								<p>Sorry, our search did not yield any gift idea results.</p>
+							{% endif %}
+						{% else %}
+							<p>This feature is not available when you are not logged in via Facebook. Please log into Facebook in order to use this feature.</p>
+							<a href={{login_redirect_path}} class="btn">Go to Login</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+

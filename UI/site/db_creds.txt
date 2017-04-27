@@ -1,0 +1,5 @@
+service=postgresql
+address=localhost
+username=test
+password=test
+database=pom

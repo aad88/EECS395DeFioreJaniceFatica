@@ -3,45 +3,39 @@
 
 {% block content %}
 	<div class="container">
+		<br>
+		<h2>Search for Gift Ideas</h2>
+		<br>
+		<div class="ruler"></div>
 		<div class="featured-block">
 			<div class="block">
-				<div class="block-title">
-					<h1>Search for Gift Ideas</h1>
+				<div class="thumbnail">
+					<div class="caption">
+						{% if logged_in %}
+							<h1>Search via Facebook</h1>
+							<p>Start a Facebook search by entering the Facebook username below of the person you want to search gift ideas for:</p>
+							<input type="text" id="target_name">
+							<button type="button" onclick="GetFBUserFriendInfo('{{access_token}}');" class="btn">Search</button>
+							<br>
+							<br>
+							<button type="button" onclick="FBUserFriendList('{{access_token}}');" class="btn">Check for Friends Available for Search</button>
+							<br>
+							<br>
+							<p id="friend_text">Click the button above to grab a list of friends you can search for.</p>
+							<hr />
+							<h1>Search via Manual Form</h1>
+							<p>Fill out information about the person you're searching for gift ideas for by using the link below:</p>
+							<a href={{intermediate_search_path}} class="btn">Start Manual Search</a>
+						{% else %}
+							<p>This feature is not available when you are not logged in via Facebook. Please log into Facebook in order to use this feature.</p>
+							<a href={{login_redirect_path}} class="btn">Go to Login</a>
+						{% endif %}
+					</div>
 				</div>
-			</div>
-		</div>
-		<div class="ruler"></div>
-	</div>
-	
-	<div class="container">
-		<div class="featured-item">
-			<div class="block">
-				<div class="block-title">
-					<h1>Search Via Facebook</h1>
-				</div>
-				{% if logged_in %}
-					<p>Please enter the Facebook username below of the person you want to search gift ideas for:</p>
-					<form action={{intermediate_search_path}} method="POST">
-						<input type="text" name="username">
-						<input type="submit" value="ENTER">
-					</form>
-				{% else %}
-					<p>This feature is not available when you are not logged in. Please log in in order to use this feature.</p>
-				{% endif %}
-			</div>
-		</div>
-	</div>
-	
-	<div class="container">
-		<div class="featured-item">
-			<div class="block">
-				<div class="block-title">
-					<h1>Search Manually</h1>
-				</div>
-				<p>Description</p>
-				<a href={{intermediate_search_path}} class="btn">Start Manual Search</a>
 			</div>
 		</div>
 	</div>
+	
+	<script src="static/js/fb_target.js"></script>
 {% endblock %}
 
