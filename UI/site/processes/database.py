@@ -125,9 +125,9 @@ def update_user(id, token, name):
 	
 	SESSION.commit()
 
-USER_EXISTS_QUERY = """
+USER_QUERY = """
 SELECT
-	count(u.id)
+	u.token, u.name
 FROM
 	users AS u
 WHERE
@@ -135,11 +135,18 @@ WHERE
 ;
 """
 
-def user_exists(id):
-	result = select_query(USER_EXISTS_QUERY, SESSION, id)
+def get_user(id):
+	result = select_query(USER_QUERY, SESSION, id)
+	if len(result) is 0:
+		return None
+	result = result[0]
 	
-	result_int = int(result[0][0])
-	return result_int is 1
+	user = {}
+	user['id'] = id
+	user['token'] = result[0]
+	user['name'] = result[1]
+	
+	return user
 
 # --------------------
 # QUERIES - GIFT IDEAS
@@ -378,9 +385,10 @@ def get_searches_for_user(user_id):
 		
 		search_ideas = []
 		current_search_id = search['id']
-		for idea in ideas:
-			if idea['search_id'] is current_search_id:
-				search_ideas.append(idea['idea_id'])
+		if ideas is not None:
+			for idea in ideas:
+				if idea['search_id'] is current_search_id:
+					search_ideas.append(idea['idea_id'])
 		search['ideas'] = search_ideas
 		
 		searches.append(search)

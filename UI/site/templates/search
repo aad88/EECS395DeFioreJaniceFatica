@@ -19,7 +19,7 @@
 								<input type="submit" value="ENTER">
 							</form>
 							<br>
-							<button type="button" onclick="FBUserFriendList();" class="btn">Check for Friends Available for Search</button>
+							<button type="button" onclick="FBUserFriendList('{{access_token}}');" class="btn">Check for Friends Available for Search</button>
 							<br>
 							<br>
 							<p id="friend_text">Click the button above to grab a list of friends you can search for.</p>

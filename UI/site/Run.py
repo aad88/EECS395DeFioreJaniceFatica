@@ -214,11 +214,13 @@ def login_template():
 # FACEBOOK LOGIN PROCESS
 @app.route(TEMPLATE_DIC['Facebook Login Process'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST'])
 def login_launch_process():
+	print("LOGIN STATUS: {}".format(request.json['status']))
+	
 	user_id = request.json['userID']
 	access_token = request.json['accessToken']
-	first_name = request.json['firstName']
+	name = request.json['name']
 	
-	account.session_login(user_id, access_token, first_name)
+	account.session_login(user_id, access_token, name)
 	
 	return "SUCCESS"
 
@@ -226,17 +228,19 @@ def login_launch_process():
 @app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY])
 def account_template():
 	user_id = None
+	user_name = None
 	past_searches = None
 	
 	if account.index():
 		user_id = account.index()
+		user_name = account.index_name()
 		past_searches = database.get_searches_for_user(user_id)
 	
 	return setup_template(
 		'Account',
 		
 		# template-specific fields
-		username=user_id,
+		username=user_name,
 		past_searches=past_searches
 	)
 
@@ -249,7 +253,8 @@ def search_template():
 			
 			# template-specific fields
 			login_redirect_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
-			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY]
+			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
+			access_token=account.index_token()
 		)
 	elif request.method == 'POST':
 		return setup_template(
@@ -257,7 +262,8 @@ def search_template():
 			
 			# template-specific fields
 			login_redirect_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
-			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY]
+			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
+			access_token=account.index_token()
 		)
 
 # MANUAL FORM
@@ -325,7 +331,8 @@ def logout_template():
 		'Logout',
 		
 		# template-specific fields
-		logout_redirect_path=TEMPLATE_DIC['Facebook Logout Process'][TEMPLATE_DIC_PATH_ENTRY]
+		logout_redirect_path=TEMPLATE_DIC['Facebook Logout Process'][TEMPLATE_DIC_PATH_ENTRY],
+		access_token=account.index_token()
 	)
 
 # FACEBOOK LOGOUT PROCESS

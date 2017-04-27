@@ -2,26 +2,32 @@
 
 function FBLogin() {
 	FB.login(function (response) {
-		var data_obj = {
-			userID: response.authResponse.userID,
-			accessToken: response.authResponse.accessToken,
-			firstName: null
-		};
-		var data_json = JSON.stringify(data_obj);
-		$.ajax({
-			url: "/login/facebook",
-			type: "POST",
-			data: data_json,
-			async: false,
-			contentType: "application/json",
-			success: function (data, textStatus, jqXHR) {
-				if (data == "SUCCESS") {
-					location.replace("http://localhost:5000/account");
-				}
+		FB.api(
+			'/me',
+			function (response2) {
+				var data_obj = {
+					status: response.status,
+					userID: response.authResponse.userID,
+					accessToken: response.authResponse.accessToken,
+					name: response2.name
+				};
+				var data_json = JSON.stringify(data_obj);
+				$.ajax({
+					url: "/login/facebook",
+					type: "POST",
+					data: data_json,
+					async: false,
+					contentType: "application/json",
+					success: function (data, textStatus, jqXHR) {
+						if (data == "SUCCESS") {
+							location.replace("http://localhost:5000/account");
+						}
+					}
+				});
 			}
-		});
+		);
 	}, {
-		scope: 'user_friends,read_custom_friendlists',
+		scope: 'email,user_friends',
 		return_scopes: true
 	});
 }
@@ -29,9 +35,13 @@ function FBLogin() {
 function FBLogout() {
 	FB.getLoginStatus(function (response) {
 		if (response.status === 'connected') {
+			console.log('Logged in!');
 			FB.logout(function (response) {
 				var data_obj = {};
 				var data_json = JSON.stringify(data_obj);
+				
+				document.location.reload();
+				
 				$.ajax({
 					url: "/logout/facebook",
 					type: "POST",
@@ -49,45 +59,33 @@ function FBLogout() {
 	});
 }
 
-function fetchUserID() {
-	FB.api(
-		'/me',
-		function (response) {
-			return response.id;
-		}
-	);
-}
-
-function fetchUserName() {
-	FB.api(
-		'/me',
-		function (response) {
-			return response.first_name;
-		}
-	);
-}
-
 function checkFBLogin() {
 	FB.getLoginStatus(function (response) {
 		if (response.status ==='connected') {
-			var data_obj = {
-				userID: response.authResponse.userID,
-				accessToken: response.authResponse.accessToken,
-				firstName: null
-			};
-			var data_json = JSON.stringify(data_obj);
-			$.ajax({
-				url: "/login/facebook",
-				type: "POST",
-				data: data_json,
-				async: false,
-				contentType: "application/json",
-				success: function (data, textStatus, jqXHR) {
-					if (data == "SUCCESS") {
-						location.replace("http://localhost:5000/account");
-					}
+			FB.api(
+				'/me',
+				function (response2) {
+					var data_obj = {
+						status: response.status,
+						userID: response.authResponse.userID,
+						accessToken: response.authResponse.accessToken,
+						name: response2.name
+					};
+					var data_json = JSON.stringify(data_obj);
+					$.ajax({
+						url: "/login/facebook",
+						type: "POST",
+						data: data_json,
+						async: false,
+						contentType: "application/json",
+						success: function (data, textStatus, jqXHR) {
+							if (data == "SUCCESS") {
+								location.replace("http://localhost:5000/account");
+							}
+						}
+					});
 				}
-			});
+			);
 		}
 		else if (response.status === 'not_authorized') {
 			FBLogin();

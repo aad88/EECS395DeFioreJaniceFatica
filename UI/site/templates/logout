@@ -13,7 +13,7 @@
 					<div class="caption">
 						<h1>Logout via Facebook</h1>
 						<p>Click the button below to logout via Facebook.</p>
-						<button type="button" onclick="FBLogout();" class="btn">Go to Facebook</button>
+						<button type="button" onclick="FBLogout('{{access_token}}');" class="btn">Go to Facebook</button>
 					</div>
 				</div>
 			</div>
