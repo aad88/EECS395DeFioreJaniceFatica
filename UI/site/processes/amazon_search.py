@@ -1,7 +1,6 @@
 #!/usr/bin/python
 from amazonproduct import API
 from amazonproduct import AWSError
-import bottlenose
 #from sys import argv
 
 api = API(locale='us')
