@@ -1,7 +1,10 @@
 import numpy
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import NearestNeighbors
+import editdistance
 
-knn = KNeighborsClassifier(n_neighbors=1)
+knn = NearestNeighbors(n_neighbors = 1, 
+		      algorithm = 'auto',
+		      metric = lambda a,b: editdistance.eval(a, b))
 
 def train(training_data):
 	interests = numpy.reshape(training_data[0]['interests'], (1, -1))
