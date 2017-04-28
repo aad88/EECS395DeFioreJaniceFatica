@@ -444,7 +444,7 @@ def get_searches_for_user(user_id):
 		if ideas is not None:
 			for idea in ideas:
 				if idea['search_id'] is current_search_id:
-					search_ideas.append(idea['idea_id'])
+					search_ideas.append(idea)
 		search['ideas'] = search_ideas
 		
 		searches.append(search)

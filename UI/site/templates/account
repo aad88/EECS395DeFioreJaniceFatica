@@ -32,9 +32,10 @@
 											{% if search['ideas'] %}
 												Gift ideas resulting from this search:
 												{% for idea in search['ideas'] %}
-													<br>-- {{idea['name']}}
-													<br>   {{idea['price']}}
-													<br>   {{idea['url']}}
+													<br><br><img src={{idea['image_url']}} style="width:{{idea['image_width']}};height:{{idea['image_height']}}"/>
+													<br>&emsp;{{idea['name']}}
+													<br>&emsp;Price: {{idea['price']}}
+													<br>&emsp;<a href={{idea['url']}}/>Go to this gift.</a>
 												{% endfor %}
 											{% else %}
 												Sorry, we could not find any gift ideas associated with this search.
