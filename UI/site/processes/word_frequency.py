@@ -1,5 +1,6 @@
 
 import re
+from stemming.porter2 import stem
 
 stop_words = ['a','able','about','above','abroad','according','accordingly','across','actually','adj','after','afterwards','again','against','ago','ahead','ain\'t','all','allow','allows','almost','alone','along','alongside',
 'already','also','although','always','am','amid','amidst','among','amongst','an','and','another','any','anybody','anyhow','anyone','anything','anyway','anyways','anywhere','apart','appear','appreciate','appropriate','are',
@@ -33,15 +34,21 @@ stop_words = ['a','able','about','above','abroad','according','accordingly','acr
 
 def get_most_frequent_words(data):
     words = {}
+    stems = {}
     for string in data:
         string = string.lower()
         re.sub("[^a-z0-9' ]+", '', string)
         wordlist = string.split()
         for word in wordlist:
-            if words.get(word) != None:
-                words[word] = words[word] + 1
+            word_stem = stem(word)
+            if stems.get(word_stem) != None:
+                words[stems[word_stem]] = words[stems[word_stem]] + 1
             else:
-                words[word] = 1
+                stems[word_stem] = word
+                if words.get(word) != None:
+                    words[word] = words[word] + 1
+                else:
+                    words[word] = 1
 
     top_ten = []
 
