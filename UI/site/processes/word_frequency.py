@@ -29,6 +29,7 @@ stop_words = ['a','able','about','above','abroad','according','accordingly','acr
 'whence','whenever','where','whereafter','whereas','whereby','wherein','where\'s','whereupon','wherever','whether','which','whichever','while','whilst','whither','who','who\'d','whoever','whole','who\'ll','whom','whomever',
 'who\'s','whose','why','will','willing','wish','with','within','without','wonder','won\'t','would','wouldn\'t','yes','yet','you','you\'d','you\'ll','your','you\'re','yours','yourself',
 'yourselves','you\'ve','zero']
+#stop words are taken from http://www.webconfs.com/stop-words.php
 
 def get_most_frequent_words(data):
     words = {}
