@@ -5,7 +5,6 @@ import bottlenose
 #from sys import argv
 
 api = API(locale='us')
-amazon = bottlenose.Amazon('AKIAIW3XL4AGXY7DFAQQ', 'pLlEYwzIpEdoygCvhp3KmpsotpkmZZwfpDZFa11t', 'chewie027-20')
 
 def searchByKeyword(keyword, minPrice = -1, maxPrice = -1):
   items = None
