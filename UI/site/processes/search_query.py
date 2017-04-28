@@ -17,22 +17,26 @@ def process_query(user_id, info):
 	q_gender = info['gender']
 	q_hometown = info['hometown']
 	q_interests = info['interests']
-
+	
 	# create a record of this search query, if not anonymous
 	search_id = None
 	if user_id is not None:
 		search_id = database.create_search(user_id, q_label)
-
+	
 	# TODO: MACHINE LEARNING IMPLEMENTATION HERE
-
-	# TODO: AMAZON SEARCH IMPLEMENTATION HERE
+	search_interests = info['interests']
+	
+	# search on the interests via Amazon
+	for search_interest in search_interests:
+		result = amazon_search.searchByKeyword(search_interest)
+		print(result)
 	gift_ideas = []
-
+	
 	# enter each resulting gift idea into the database
 	for idea in gift_ideas:
 		# enter as new gift idea, if applicable
 		#TODO
-
+	
 		# enter in connection to this search
 		if search_id is not None:
 			#TODO
