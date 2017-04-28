@@ -271,8 +271,8 @@ VALUES (
 )
 ;
 """
-def create_search_idea(search_id, name):
-	insert_query(CREATE_SEARCH_IDEA_QUERY, SESSION, search_id, name)
+def create_search_idea(search_id, idea_id):
+	insert_query(CREATE_SEARCH_IDEA_QUERY, SESSION, search_id, idea_id)
 
 # grab a search idea by id
 
@@ -427,6 +427,109 @@ def get_searches_for_user(user_id):
 	
 	return searches
 
+# ----------------------
+# QUERIES - TRAINING SET
+# ----------------------
+
+NEXT_TRAINING_SET_ID_QUERY = """
+SELECT
+	max(ts.id)
+FROM
+	training_sets AS ts
+;
+"""
+def next_training_set_id():
+	result = select_query(NEXT_TRAINING_SET_ID_QUERY, SESSION)
+	result = result[0][0]
+	
+	result_int = 0 if result is None else int(result)
+	return result_int + 1
+
+CREATE_TRAINING_SET_QUERY = """
+INSERT INTO
+	training_sets
+VALUES (
+	{}
+)
+;
+"""
+CREATE_TRAINING_SET_INTEREST_QUERY = """
+INSERT INTO
+	training_set_interests
+VALUES (
+	{},
+	'{}'
+)
+;
+"""
+CREATE_TRAINING_SET_GIFT_QUERY = """
+INSERT INTO
+	training_set_gifts
+VALUES (
+	{},
+	'{}'
+)
+;
+"""
+def create_training_set(interests, gifts):
+	ts_id = next_training_set_id()
+	insert_query(CREATE_TRAINING_SET_QUERY, SESSION, ts_id)
+	
+	for interest in interests:
+		entry = TrainingSetInterest()
+		entry.id = ts_id
+		entry.interest = interest
+		SESSION.add(entry)
+		SESSION.commit()
+	
+	for gift in gifts:
+		entry = TrainingSetGift()
+		entry.id = ts_id
+		entry.gift = gift
+		SESSION.add(entry)
+		SESSION.commit()
+	
+	return ts_id
+
+TRAINING_DATA_INTERESTS_QUERY = """
+SELECT
+	*
+FROM
+	training_set_interests
+;
+"""
+TRAINING_DATA_GIFTS_QUERY = """
+SELECT
+	*
+FROM
+	training_set_gifts
+;
+"""
+def get_training_data():
+	training_data = {}
+	
+	interests_result = select_query(TRAINING_DATA_INTERESTS_QUERY, SESSION)
+	if len(interests_result) is not 0:
+		for result in interests_result:
+			if training_data.get(result[0], None) is None:
+				training_data[result[0]] = {
+					'interests': [],
+					'gifts': []
+				}
+			training_data[result[0]]['interests'].append(result[1])
+	
+	gifts_result = select_query(TRAINING_DATA_GIFTS_QUERY, SESSION)
+	if len(gifts_result) is not 0:
+		for result in gifts_result:
+			if training_data.get(result[0], None) is None:
+				training_data[result[0]] = {
+					'interests': [],
+					'gifts': []
+				}
+			training_data[result[0]]['gifts'].append(result[1])
+	
+	return training_data.values()
+
 # ---------------
 # DATABASE TABLES
 # ---------------
@@ -463,4 +566,18 @@ class SearchIdea(BASE):
 	__tablename__ = 'search_ideas'
 	search_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('searches.id'), primary_key=True)
 	idea_id = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey('ideas.id'), primary_key=True)
+
+class TrainingSet(BASE):
+	__tablename__ = 'training_sets'
+	id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+
+class TrainingSetInterest(BASE):
+	__tablename__ = 'training_set_interests'
+	id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('training_sets.id'), primary_key=True)
+	interest = sqlalchemy.Column(sqlalchemy.String, primary_key=True, nullable=False)
+
+class TrainingSetGift(BASE):
+	__tablename__ = 'training_set_gifts'
+	id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('training_sets.id'), primary_key=True)
+	gift = sqlalchemy.Column(sqlalchemy.String, primary_key=True, nullable=False)
 
