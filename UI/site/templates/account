@@ -32,7 +32,9 @@
 											{% if search['ideas'] %}
 												Gift ideas resulting from this search:
 												{% for idea in search['ideas'] %}
-													<br>-- {{idea}}
+													<br>-- {{idea['name']}}
+													<br>   {{idea['price']}}
+													<br>   {{idea['url']}}
 												{% endfor %}
 											{% else %}
 												Sorry, we could not find any gift ideas associated with this search.

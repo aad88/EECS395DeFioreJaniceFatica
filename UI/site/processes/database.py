@@ -278,9 +278,14 @@ def create_search_idea(search_id, idea_id):
 
 SEARCH_IDEAS_QUERY = """
 SELECT
-	si.idea_id
-FROM
-	search_ideas AS si
+	i.id, i.name, i.url, i.price, i.image_url, i.image_width, i.image_height
+FROM (
+		search_ideas AS si
+	JOIN
+		ideas AS i
+	ON
+		si.idea_id = i.id
+)
 WHERE
 	si.search_id = {}
 ;
@@ -292,7 +297,15 @@ def get_search_ideas(id):
 	
 	ideas = []
 	for item in result:
-		ideas.append(item[0])
+		idea = {}
+		idea['id'] = item[0]
+		idea['name'] = item[1]
+		idea['url'] = item[2]
+		idea['price'] = item[3]
+		idea['image_url'] = item[4]
+		idea['image_width'] = item[5]
+		idea['image_height'] = item[6]
+		ideas.append(idea)
 	
 	return ideas
 
@@ -360,9 +373,14 @@ def get_most_recent_search(user_id):
 
 SEARCH_IDEAS_FOR_USER_QUERY = """
 SELECT
-	si.search_id, s.label, si.idea_id
-FROM (
-		search_ideas AS si
+	si.search_id, s.label, si.idea_id, i.name, i.url, i.price, i.image_url, i.image_width, i.image_height
+FROM ((
+			search_ideas AS si
+		JOIN
+			ideas AS i
+		ON
+			si.idea_id = i.id
+	)
 	JOIN
 		searches AS s
 	ON
@@ -383,6 +401,12 @@ def get_search_ideas_for_user(user_id):
 		idea['search_id'] = item[0]
 		idea['search_label'] = item[1]
 		idea['idea_id'] = item[2]
+		idea['name'] = item[3]
+		idea['url'] = item[4]
+		idea['price'] = item[5]
+		idea['image_url'] = item[6]
+		idea['image_width'] = item[7]
+		idea['image_height'] = item[8]
 		
 		ideas.append(idea)
 	
