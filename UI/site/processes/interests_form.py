@@ -14,22 +14,23 @@ except ImportError:
 # GLOBAL VARIABLES
 # ----------------
 
+# whitespace to remove from the inputs in the form's fields
 INTERESTS_WHITESPACE_TO_REMOVE = string.whitespace.replace('\n', '').replace(' ', '')
 
 # -------------
 # PARSE METHODS
 # -------------
 
+# pull the label information from the form
 def parse_label_info(form):
-	# pull the label information from the form
 	label = form.form['label']
 	if label is None:
 		return ''
 	
 	return label
 
+# pull the age information as an int from the form
 def parse_age_info(form):
-	# pull the age information as an int from the form
 	age = form.form['age']
 	if age == '':
 		age = None
@@ -37,24 +38,24 @@ def parse_age_info(form):
 		age = int(age)
 	return age
 
+# pull the gender information from the form
 def parse_gender_info(form):
-	# pull the gender information from the form
 	gender = str(form.form['gender'])
 	if gender == 'unspecified':
 		return None
 	
 	return gender
 
+# pull the hometown information from the form
 def parse_hometown_info(form):
-	# pull the hometown information from the form
 	hometown = str(form.form['hometown'])
 	if hometown == '':
 		return None
 	
 	return hometown
 
+# pull the interests information from the form
 def parse_interests_info(form):
-	# pull the interests information from the form
 	interests = str(form.form['interests'])
 	if interests == '':
 		return None
@@ -76,8 +77,8 @@ def parse_interests_info(form):
 # ------------------------------
 
 def info_from_form(form):
+	# parse out each piece of information from the form
 	info = {}
-	
 	info['label'] = parse_label_info(form)
 	info['age'] = parse_age_info(form)
 	info['gender'] = parse_gender_info(form)

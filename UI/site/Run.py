@@ -40,20 +40,20 @@ def key(name):
 # grabbed application key from database
 APP_KEY = key(APP_KEY_NAME)
 # grabbed facebook app id from database
-#FACEBOOK_ID = key(FACEBOOK_ID_KEY_NAME)
+FACEBOOK_ID = key(FACEBOOK_ID_KEY_NAME)
 # grabbed facebook app secret from database
-#FACEBOOK_SECRET = key(FACEBOOK_SECRET_KEY_NAME)
+FACEBOOK_SECRET = key(FACEBOOK_SECRET_KEY_NAME)
 
 # ------------------------------
 # APPLICATION LAYOUT DEFINITIONS
 # ------------------------------
 
-# nav bar listing
+# nav bar listing (not logged in)
 NAV_BAR_ITEMS = (
 	'Home',
 	'Login'
 )
-
+# nav bar listing (logged in)
 NAV_BAR_LOGGED_IN_ITEMS = (
 	'Home',
 	'Account',
@@ -61,13 +61,8 @@ NAV_BAR_LOGGED_IN_ITEMS = (
 	'Logout'
 )
 
-# template dictionary
+# template dictionary (template file name, path, page title)
 TEMPLATE_DIC = {
-	'Test Page': (
-		'test',
-		'/test',
-		'PoM TEST PAGE'
-	),
 	'Home': (
 		'home',
 		'/',
@@ -120,29 +115,35 @@ TEMPLATE_DIC = {
 	)
 }
 
-# template dictionary entry index constants
+# template dictionary file name index
 TEMPLATE_DIC_NAME_ENTRY = 0
+# template dictionary page path index
 TEMPLATE_DIC_PATH_ENTRY = 1
+# template dictionary page title index
 TEMPLATE_DIC_PAGE_HEAD_ENTRY = 2
 
 # ------------------------
 # TEMPLATE USAGE FUNCTIONS
 # ------------------------
 
+# creates a navigation bar for use by the wrapper template
 def create_nav_bar():
 	nav_bar = []
 	
+	# choose items to display depending on the user's login status
 	if account.index():
 		items = NAV_BAR_LOGGED_IN_ITEMS
 	else:
 		items = NAV_BAR_ITEMS
 	
+	# map each navigation item provided
 	for name in items:
 		path = TEMPLATE_DIC[name][TEMPLATE_DIC_PATH_ENTRY]
 		nav_bar.append((name, path))
 	
 	return nav_bar
 
+# wrapper for 'render_template()' with constant keyword inclusions
 def setup_template(template, **kw_args):
 	return render_template(
 		# template name, from dictionary
@@ -163,6 +164,7 @@ def setup_template(template, **kw_args):
 		**kw_args
 	)
 
+# wrapper for 'redirect_to()' that grabs template info and uses constant redirect code
 def redirect_to(template):
 	return redirect(TEMPLATE_DIC[template][TEMPLATE_DIC_PATH_ENTRY], 302)
 
@@ -170,28 +172,19 @@ def redirect_to(template):
 # TEMPLATE ROUTING, RESPONSE FUNCTIONS
 # ------------------------------------
 
-# TEST PAGE
-@app.route(TEMPLATE_DIC['Test Page'][TEMPLATE_DIC_PATH_ENTRY])
-def test_page_template():
-	return setup_template(
-		'Test Page',
-		
-		# template-specific fields
-		dummy=''
-	)
-
 # HOME
-@app.route(TEMPLATE_DIC['Home'][TEMPLATE_DIC_PATH_ENTRY])
+@app.route(TEMPLATE_DIC['Home'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
 def home_template():
-	return setup_template(
-		'Home',
+	if request.method == 'GET':
+		return setup_template(
+			'Home',
 		
-		# template-specific fields
-		login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY]
-	)
+			# template-specific fields
+			login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY]
+		)
 
 # LOGIN
-@app.route(TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET', 'POST'])
+@app.route(TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
 def login_template():
 	if request.method == 'GET':
 		return setup_template(
@@ -204,35 +197,44 @@ def login_template():
 # FACEBOOK LOGIN PROCESS
 @app.route(TEMPLATE_DIC['Facebook Login Process'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST'])
 def login_launch_process():
-	print("LOGIN STATUS: {}".format(request.json['status']))
+	if request.method == 'POST':
+		# relay login event to server console
+		print("LOGIN STATUS: {}".format(request.json['status']))
 	
-	user_id = request.json['userID']
-	access_token = request.json['accessToken']
-	name = request.json['name']
+		# grab user information from request
+		user_id = request.json['userID']
+		access_token = request.json['accessToken']
+		name = request.json['name']
 	
-	account.session_login(user_id, access_token, name)
+		# use Flask's session cookies to record login status
+		account.session_login(user_id, access_token, name)
 	
-	return 'SUCCESS'
+		# respond to ajax call
+		return 'SUCCESS'
 
 # ACCOUNT
-@app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY])
+@app.route(TEMPLATE_DIC['Account'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
 def account_template():
-	user_id = None
-	user_name = None
-	past_searches = None
+	if request.method == 'GET':
+		# initialize user information
+		user_id = None
+		user_name = None
+		past_searches = None
 	
-	if account.index():
-		user_id = account.index()
-		user_name = account.index_name()
-		past_searches = database.get_searches_for_user(user_id)
+		# if logged in, grab obtainable information from the user
+		if account.index():
+			user_id = account.index()
+			user_name = account.index_name()
+			past_searches = database.get_searches_for_user(user_id)
 	
-	return setup_template(
-		'Account',
+		# construct the template
+		return setup_template(
+			'Account',
 		
-		# template-specific fields
-		username=user_name,
-		past_searches=past_searches
-	)
+			# template-specific fields
+			username=user_name,
+			past_searches=past_searches
+		)
 
 # SEARCH
 @app.route(TEMPLATE_DIC['Search'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
@@ -246,23 +248,16 @@ def search_template():
 			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
 			access_token=account.index_token()
 		)
-	elif request.method == 'POST':
-		return setup_template(
-			'Search',
-			
-			# template-specific fields
-			login_redirect_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY],
-			intermediate_search_path=TEMPLATE_DIC['Manual Form'][TEMPLATE_DIC_PATH_ENTRY],
-			access_token=account.index_token()
-		)
 
 # FACEBOOK SEARCH PROCESS
 @app.route(TEMPLATE_DIC['Facebook Search Process'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST'])
 def search_launch_process():
 	if request.method == 'POST':
+		# process the search on the user's behalf
 		user_id = account.index()
 		search_query.process_facebook_query(user_id, request.json)
 		
+		# respond to ajax call
 		return 'SUCCESS'
 
 # MANUAL FORM
@@ -285,10 +280,13 @@ def manual_form_template():
 	elif request.method == 'POST':
 		#user_id = account.index()
 		#search_query.process_manual_query(user_id, request)
+		
+		# attempt to process the search from the given information
 		try:
 			user_id = account.index()
 			search_query.process_manual_query(user_id, request)
 		except Exception:
+			# if something went wrong with the search, bounce back to the search page
 			return setup_template(
 				'Manual Form',
 			
@@ -309,12 +307,14 @@ def manual_form_template():
 @app.route(TEMPLATE_DIC['Results'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
 def results_template():
 	if request.method == 'GET':
+		# if logged in, results are the most recent search performed
 		if account.index():
 			user_id = account.index()
 			most_recent_search = database.get_most_recent_search(user_id)
 		else:
 			most_recent_search = None
 		
+		# construct the template
 		return setup_template(
 			'Results',
 			
@@ -324,7 +324,7 @@ def results_template():
 		)
 
 # LOGOUT
-@app.route(TEMPLATE_DIC['Logout'][TEMPLATE_DIC_PATH_ENTRY])
+@app.route(TEMPLATE_DIC['Logout'][TEMPLATE_DIC_PATH_ENTRY], methods=['GET'])
 def logout_template():
 	return setup_template(
 		'Logout',
@@ -337,8 +337,10 @@ def logout_template():
 # FACEBOOK LOGOUT PROCESS
 @app.route(TEMPLATE_DIC['Facebook Logout Process'][TEMPLATE_DIC_PATH_ENTRY], methods=['POST'])
 def logout_launch_redirect():
+	# deconstruct login session in Flask's session cookies
 	account.session_logout()
 	
+	# respond to ajax call
 	return 'SUCCESS'
 
 # -------------------------------------
@@ -346,7 +348,9 @@ def logout_launch_redirect():
 # -------------------------------------
 
 if __name__ == '__main__':
+	# attach the key for this app
 	app.secret_key = APP_KEY
 	
+	# start the app
 	app.run()
 

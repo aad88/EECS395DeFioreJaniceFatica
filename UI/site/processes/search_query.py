@@ -6,6 +6,10 @@ import database, facebook, interests_form
 # external imports
 
 
+# -------------------------------
+# SEARCH QUERY PROCESSING METHODS
+# -------------------------------
+
 def process_query(user_id, info):
 	# grab the information pieces provided
 	q_label = info['label']
@@ -34,11 +38,13 @@ def process_query(user_id, info):
 			#TODO
 			pass
 
+# handle and process a search query coming from Facebook
 def process_facebook_query(user_id, json):
 	info = facebook.info_from_json(json)
 	
 	#process_query(user_id, info)
 
+# handle and process a search query coming from the manual form
 def process_manual_query(user_id, form):
 	info = interests_form.info_from_form(form)
 	
