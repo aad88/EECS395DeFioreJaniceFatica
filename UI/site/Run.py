@@ -21,10 +21,8 @@ app = Flask(__name__)
 DB_CREDS_FILE = 'db_creds.txt'
 # application key, for cookies
 APP_KEY_NAME = 'app_key'
-# facebook app id
-FACEBOOK_ID_KEY_NAME = 'fb_app_id'
-# facebook app secret
-FACEBOOK_SECRET_KEY_NAME = 'fb_app_secret'
+# facebook app key
+FACEBOOK_APP_KEY_NAME = 'fb_app_key'
 
 # ---------------------------
 # DATABASE-ORIENTED VARIABLES
@@ -39,10 +37,8 @@ def key(name):
 
 # grabbed application key from database
 APP_KEY = key(APP_KEY_NAME)
-# grabbed facebook app id from database
-FACEBOOK_ID = key(FACEBOOK_ID_KEY_NAME)
-# grabbed facebook app secret from database
-FACEBOOK_SECRET = key(FACEBOOK_SECRET_KEY_NAME)
+# grabbed facebook app key from database
+FACEBOOK_KEY = key(FACEBOOK_APP_KEY_NAME)
 
 # ------------------------------
 # APPLICATION LAYOUT DEFINITIONS

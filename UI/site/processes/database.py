@@ -271,8 +271,8 @@ VALUES (
 )
 ;
 """
-def create_search_idea(search_id, name):
-	insert_query(CREATE_SEARCH_IDEA_QUERY, SESSION, search_id, name)
+def create_search_idea(search_id, idea_id):
+	insert_query(CREATE_SEARCH_IDEA_QUERY, SESSION, search_id, idea_id)
 
 # grab a search idea by id
 
@@ -463,4 +463,18 @@ class SearchIdea(BASE):
 	__tablename__ = 'search_ideas'
 	search_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('searches.id'), primary_key=True)
 	idea_id = sqlalchemy.Column(sqlalchemy.String, sqlalchemy.ForeignKey('ideas.id'), primary_key=True)
+
+class TrainingSet(BASE):
+	__tablename__ = 'training_sets'
+	id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+
+class TrainingSetInterest(BASE):
+	__tablename__ = 'training_set_interests'
+	id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('training_sets.id'), primary_key=True)
+	interest = sqlalchemy.Column(sqlalchemy.String, primary_key=True, nullable=False, unique=True)
+
+class TrainingSetIdeas(BASE):
+	__tablename__ = 'training_set_ideas'
+	id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('training_sets.id'), primary_key=True)
+	idea = sqlalchemy.Column(sqlalchemy.String, primary_key=True, nullable=False, unique=True)
 
