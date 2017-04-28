@@ -24,7 +24,8 @@ def process_query(user_id, info):
 		search_id = database.create_search(user_id, q_label)
 	
 	# get a final list of keywords to search from machine learning prediction of interests
-	search_interests = machine_learning.target_match(q_interests)
+	#search_interests = machine_learning.target_match(q_interests)
+	search_interests = q_interests
 	
 	# search on the interests via Amazon
 	gift_ideas = []

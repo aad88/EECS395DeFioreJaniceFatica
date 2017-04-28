@@ -2,7 +2,7 @@
 import sys
 
 # project imports
-from processes import database, account, search_query
+from processes import database, account, search_query, machine_learning
 
 # external imports
 try:
@@ -39,6 +39,9 @@ def key(name):
 APP_KEY = key(APP_KEY_NAME)
 # grabbed facebook app key from database
 FACEBOOK_KEY = key(FACEBOOK_APP_KEY_NAME)
+
+# machine learning training data
+TRAINING_DATA = database.get_training_data()
 
 # ------------------------------
 # APPLICATION LAYOUT DEFINITIONS
@@ -346,6 +349,9 @@ def logout_launch_redirect():
 if __name__ == '__main__':
 	# attach the key for this app
 	app.secret_key = APP_KEY
+	
+	# train the machine learning algorithm
+	# machine_learning.train(TRAINING_DATA)
 	
 	# start the app
 	app.run()
