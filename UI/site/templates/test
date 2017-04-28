@@ -1,7 +1,0 @@
-<!DOCTYPE html>
-{% extends "_wrapper.html" %}
-
-{% block content %}
-	<h1>PAGE STUFF</h1>
-{% endblock %}
-
