@@ -1,11 +1,11 @@
 #!/usr/bin/python
 from amazonproduct import API
 from amazonproduct import AWSError
+import bottlenose
 #from sys import argv
 
 api = API(locale='us')
-
-
+amazon = bottlenose.Amazon('AKIAIW3XL4AGXY7DFAQQ', 'pLlEYwzIpEdoygCvhp3KmpsotpkmZZwfpDZFa11t', 'chewie027-20')
 
 def searchByKeyword(keyword, minPrice = -1, maxPrice = -1):
   items = None
@@ -20,6 +20,7 @@ def searchByKeyword(keyword, minPrice = -1, maxPrice = -1):
     print e.msg
     return None
   results = []
+  count = 0
   for result in items:
     obj = {}
     obj['id'] = result.ASIN
@@ -33,21 +34,23 @@ def searchByKeyword(keyword, minPrice = -1, maxPrice = -1):
     obj['imageheight'] = result.SmallImage.Height
     obj['imagewidth'] = result.SmallImage.Width
     results.append(obj)
-  results = results[:3]
+    count += 1
+    if count == 3:
+        break
   return results
 
 def searchById(id):
-  items = None
-  try:
-    items = api.item_lookup(ItemId=id, ResponseGroup='Medium')
-  except AWSError as e:
-    print 'Amazon complained about request'
-    print e.code
-    print e.msg
-  results = []
-  for result in items:
+    items = None
+    try:
+        items = api.item_lookup(ItemId=id, ResponseGroup='Medium')
+    except AWSError as e:
+        print 'Amazon complained about request'
+        print e.code
+        print e.msg
+    results = []
+    result = items.Items.Item
     obj = {}
-    obj['id'] = result.ASIN
+    obj['id'] = id
     obj['name'] = result.ItemAttributes.Title
     obj['url'] = result.DetailPageURL
     try:
@@ -58,5 +61,4 @@ def searchById(id):
     obj['imageheight'] = result.SmallImage.Height
     obj['imagewidth'] = result.SmallImage.Width
     results.append(obj)
-  results = results[:3]
-  return results
+    return results
