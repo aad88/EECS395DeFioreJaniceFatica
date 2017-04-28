@@ -37,10 +37,10 @@ def searchByKeyword(keyword, minPrice = -1, maxPrice = -1):
         break
   return results
 
-def searchById(id):
+def searchById(id, similar = False):
     items = None
     try:
-        items = api.item_lookup(ItemId=id, ResponseGroup='Medium')
+        items = api.item_lookup(ItemId=id, ResponseGroup='Medium,Similarities')
     except AWSError as e:
         print 'Amazon complained about request'
         print e.code
@@ -59,4 +59,14 @@ def searchById(id):
     obj['imageheight'] = result.SmallImage.Height
     obj['imagewidth'] = result.SmallImage.Width
     results.append(obj)
+    if not similar:
+        similar_products = result.SimilarProducts
+        count = 0
+        for prod in similar_products:
+            obj = {}
+            new_id = prod.SimilarProduct.ASIN
+            results.append(searchById(new_id, True))
+            count += 1
+            if count == 2:
+                break
     return results
