@@ -40,9 +40,14 @@ def searchByKeyword(keyword, minPrice = -1, maxPrice = -1):
             obj['price'] = result.ItemAttributes.ListPrice.FormattedPrice
         except:
             obj['price'] = None
-        obj['imageurl'] = result.SmallImage.URL
-        obj['imageheight'] = result.SmallImage.Height
-        obj['imagewidth'] = result.SmallImage.Width
+        try:
+            obj['imageurl'] = result.SmallImage.URL
+            obj['imageheight'] = result.SmallImage.Height
+            obj['imagewidth'] = result.SmallImage.Width
+        except:
+            obj['imageurl'] = None
+            obj['imageheight'] = None
+            obj['imagewidth'] = None
         results.append(obj)
         count += 1
         # limit to three results
@@ -76,9 +81,14 @@ def searchById(id, similar = False):
         obj['price'] = result.ItemAttributes.ListPrice.FormattedPrice
     except:
         obj['price'] = None
-    obj['imageurl'] = result.SmallImage.URL
-    obj['imageheight'] = result.SmallImage.Height
-    obj['imagewidth'] = result.SmallImage.Width
+    try:
+        obj['imageurl'] = result.SmallImage.URL
+        obj['imageheight'] = result.SmallImage.Height
+        obj['imagewidth'] = result.SmallImage.Width
+    except:
+        obj['imageurl'] = None
+        obj['imageheight'] = None
+        obj['imagewidth'] = None
     results.append(obj)
     #get two similar products to return along with the original
     if not similar:
