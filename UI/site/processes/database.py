@@ -79,14 +79,12 @@ def construct_query(template, *args):
 # format, run an insertion query
 def insert_query(query_template, session, *args):
 	query = construct_query(query_template, *args)
-	session.execute(query)
-	session.commit()
-	#try:
-	#	session.execute(query)
-	#	session.commit()
-	#except Exception:
-	#	session.rollback()
-	#	raise Exception
+	try:
+		session.execute(query)
+		session.commit()
+	except Exception:
+		session.rollback()
+		raise Exception
 
 # format, run a select query
 def select_query(query_template, session, *args):

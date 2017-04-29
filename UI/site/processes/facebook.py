@@ -142,13 +142,14 @@ def info_from_json(json):
 
 	# separate out, analyze posts for possible interests
 	digested_posts = digest_posts(name, json['posts'])
-	# TODO: word frequency processing of messages for more interests
+	
+	# word frequency processing of messages for more interests
+	interests = []
 	frequent_words = word_frequency.get_most_frequent_words(digested_posts['messages'])
 	for word in frequent_words:
-		intersts.append(word)
+		interests.append(word)
 
 	# compile a final list of interests
-	interests = []
 	for story in digested_posts['stories']:
 		interests.append(story)
 	for hashtag in digested_posts['hashtags']:
