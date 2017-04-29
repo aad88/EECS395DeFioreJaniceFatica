@@ -31,6 +31,8 @@ def process_query(user_id, info):
 	gift_ideas = []
 	for search_interest in search_interests:
 		result = amazon_search.searchByKeyword(search_interest)
+		if result is None:
+			continue
 		for idea in result:
 			if idea not in gift_ideas:
 				gift_ideas.append(idea)
@@ -49,7 +51,7 @@ def process_query(user_id, info):
 def process_facebook_query(user_id, json):
 	info = facebook.info_from_json(json)
 
-	#process_query(user_id, info)
+	process_query(user_id, info)
 
 # handle and process a search query coming from the manual form
 def process_manual_query(user_id, form):

@@ -148,7 +148,7 @@ def info_from_json(json):
 	for story in digested_posts['stories']:
 		interests.append(story)
 	for hashtag in digested_posts['hashtags']:
-		interests.append(hashtags)
+		interests.append(hashtag)
 	
 	# construct the resulting dictionary
 	info = {}
