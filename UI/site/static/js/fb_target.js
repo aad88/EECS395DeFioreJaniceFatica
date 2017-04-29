@@ -84,7 +84,7 @@ function GetFBUserFriendInfo(access_token) {
 								}
 								
 								var data_obj = {
-									name: current_name,
+									name: input_name,
 									posts: posts
 								};
 								var data_json = JSON.stringify(data_obj);

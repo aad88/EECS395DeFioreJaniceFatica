@@ -10,7 +10,7 @@ import database, facebook, interests_form, machine_learning, amazon_search
 # SEARCH QUERY PROCESSING METHODS
 # -------------------------------
 
-def process_query(user_id, info):
+def process_query(user_id, info, training_data):
 	# grab the information pieces provided
 	q_label = info['label']
 	q_age = info['age']
@@ -24,8 +24,11 @@ def process_query(user_id, info):
 		search_id = database.create_search(user_id, q_label)
 	
 	# get a final list of keywords to search from machine learning prediction of interests
-	#search_interests = machine_learning.target_match(q_interests)
 	search_interests = q_interests
+	ml_results = machine_learning.target_match(training_data, info)
+	for ml_result in ml_results:
+		if ml_result not in search_interests:
+			search_interests.append(ml_result)
 	
 	# search on the interests via Amazon
 	gift_ideas = []
@@ -48,13 +51,13 @@ def process_query(user_id, info):
 			database.create_search_idea(search_id, idea['id'])
 
 # handle and process a search query coming from Facebook
-def process_facebook_query(user_id, json):
+def process_facebook_query(user_id, json, training_data):
 	info = facebook.info_from_json(json)
 
-	process_query(user_id, info)
+	process_query(user_id, info, training_data)
 
 # handle and process a search query coming from the manual form
-def process_manual_query(user_id, form):
+def process_manual_query(user_id, form, training_data):
 	info = interests_form.info_from_form(form)
 
-	process_query(user_id, info)
+	process_query(user_id, info, training_data)

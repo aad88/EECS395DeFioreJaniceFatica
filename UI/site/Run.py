@@ -254,7 +254,7 @@ def search_launch_process():
 	if request.method == 'POST':
 		# process the search on the user's behalf
 		user_id = account.index()
-		search_query.process_facebook_query(user_id, request.json)
+		search_query.process_facebook_query(user_id, request.json, TRAINING_DATA)
 		
 		# respond to ajax call
 		return 'SUCCESS'
@@ -277,13 +277,10 @@ def manual_form_template():
 			prev_interests=''
 		)
 	elif request.method == 'POST':
-		#user_id = account.index()
-		#search_query.process_manual_query(user_id, request)
-		
 		# attempt to process the search from the given information
 		try:
 			user_id = account.index()
-			search_query.process_manual_query(user_id, request)
+			search_query.process_manual_query(user_id, request, TRAINING_DATA)
 		except Exception:
 			# if something went wrong with the search, bounce back to the search page
 			return setup_template(
@@ -349,9 +346,6 @@ def logout_launch_redirect():
 if __name__ == '__main__':
 	# attach the key for this app
 	app.secret_key = APP_KEY
-	
-	# train the machine learning algorithm
-	# machine_learning.train(TRAINING_DATA)
 	
 	# start the app
 	app.run()
