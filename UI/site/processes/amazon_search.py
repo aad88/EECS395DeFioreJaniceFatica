@@ -87,7 +87,7 @@ def searchById(id, similar = False):
         for prod in similar_products:
             obj = {}
             new_id = prod.SimilarProduct.ASIN
-            results.append(searchById(new_id, True))
+            results.extend(searchById(new_id, True))
             count += 1
             if count == 2:
                 break
