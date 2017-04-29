@@ -1,19 +1,19 @@
 import numpy
 from sklearn.neighbors import NearestNeighbors
-import editdistance
+import edit_dist
+import sys
 
-knn = NearestNeighbors(n_neighbors = 1, 
-		      algorithm = 'auto',
-		      metric = lambda a,b: editdistance.eval(a, b))
-
-def train(training_data):
-	interests = numpy.reshape(training_data[0]['interests'], (1, -1))
-	print(interests)
-	gifts = numpy.reshape(training_data[0]['gifts'], (1, -1))
-	print(gifts)
-	knn.fit(interests, gifts)
-
-def target_match(target_info):
-	target_gifts = knn.predict(1.0)
+def target_match(training_data, target_info):
+	target_gifts = []
+	for interest in target_info['interests']:
+		min_dist = sys.maxsize
+		for i in range(len(training_data)):
+			for j in range(len(training_data[i]['interests'])):
+				dist = edit_dist.editDistDP(interest, training_data[i]['interests'][j], len(interest), len(training_data[i]['interests'][j]))
+				if dist < min_dist:
+					min_dist = dist
+					item = training_data[i]['gifts']
+		for k in item:
+			if k not in target_gifts:
+				target_gifts.append(k)	
 	return target_gifts
-
