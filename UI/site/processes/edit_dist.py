@@ -1,3 +1,5 @@
+#code here taken from http://www.geeksforgeeks.org/dynamic-programming-set-5-edit-distance/
+
 # A Dynamic Programming based Python program for edit
 # distance problem
 def editDistDP(str1, str2, m, n):
@@ -31,6 +33,3 @@ def editDistDP(str1, str2, m, n):
                                    dp[i-1][j-1])    # Replace
 
     return dp[m][n]
-
-
-#code here from http://www.geeksforgeeks.org/dynamic-programming-set-5-edit-distance/
