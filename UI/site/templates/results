@@ -12,11 +12,14 @@
 				<div class="thumbnail">
 					<div class="caption">
 						{% if logged_in %}
-							<h1>Potential Gift Ideas</h1>
+							<h1>Potential Gift Ideas from Search "{{results['label']}}"</h1>
 							{% if results['ideas'] %}
 								Based on the information provided, here is a list of potential gift ideas we think may be good:<br>
 									{% for idea in results['ideas'] %}
-										<br>-- {{idea}}
+										<br><br><img src={{idea['image_url']}} style="width:{{idea['image_width']}};height:{{idea['image_height']}}"/>
+										<br>&emsp;{{idea['name']}}
+										<br>&emsp;Price: {{idea['price']}}
+										<br>&emsp;<a href={{idea['url']}}/>Go to this gift.</a>
 									{% endfor %}
 							{% else %}
 								<p>Sorry, our search did not yield any gift idea results.</p>

@@ -1,7 +1,6 @@
 #!/usr/bin/python
 from amazonproduct import API
 from amazonproduct import AWSError
-from timeit import default_timer as timer
 from multiprocessing import Semaphore
 from time import sleep
 #from sys import argv
@@ -9,13 +8,15 @@ from time import sleep
 api = API(locale='us')
 #last_time = 0
 sem = Semaphore()
+# this semaphore is used due to Amazon's throttling. We are allowed exactly one Amazon query per second, so this is used to prevent sending queries too quickly
 
+#takes in a string keyword, and has the potential for a minimum and maximum price requirement
+#returns a list of dictionaries, where each dictionary represents a product
 def searchByKeyword(keyword, minPrice = -1, maxPrice = -1):
     items = None
     try:
         sem.acquire()
         sleep(1)
-        time = timer()
         if (minPrice == -1):
             items = api.item_search('All', Keywords=keyword, ResponseGroup='Medium')
         else:
@@ -49,7 +50,9 @@ def searchByKeyword(keyword, minPrice = -1, maxPrice = -1):
             break
     return results
 
-#similar should always be false when method is called from an outside source, used to get similar products by id
+#similar should always be false when method is called from an outside source, used to get similar products by id in order to reuse code
+#takes in a string id that is a product's ASIN (Amazon ID)
+#returns a list of dictionaries, where each dictionary represents one product
 def searchById(id, similar = False):
     items = None
     sem.acquire()
@@ -84,7 +87,7 @@ def searchById(id, similar = False):
         for prod in similar_products:
             obj = {}
             new_id = prod.SimilarProduct.ASIN
-            results.append(searchById(new_id, True))
+            results.extend(searchById(new_id, True))
             count += 1
             if count == 2:
                 break

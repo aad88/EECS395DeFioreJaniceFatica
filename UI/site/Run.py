@@ -177,7 +177,7 @@ def home_template():
 	if request.method == 'GET':
 		return setup_template(
 			'Home',
-		
+			
 			# template-specific fields
 			login_path=TEMPLATE_DIC['Login'][TEMPLATE_DIC_PATH_ENTRY]
 		)
@@ -199,15 +199,15 @@ def login_launch_process():
 	if request.method == 'POST':
 		# relay login event to server console
 		print("LOGIN STATUS: {}".format(request.json['status']))
-	
+		
 		# grab user information from request
 		user_id = request.json['userID']
 		access_token = request.json['accessToken']
 		name = request.json['name']
-	
+		
 		# use Flask's session cookies to record login status
 		account.session_login(user_id, access_token, name)
-	
+		
 		# respond to ajax call
 		return 'SUCCESS'
 
@@ -219,17 +219,17 @@ def account_template():
 		user_id = None
 		user_name = None
 		past_searches = None
-	
+		
 		# if logged in, grab obtainable information from the user
 		if account.index():
 			user_id = account.index()
 			user_name = account.index_name()
 			past_searches = database.get_searches_for_user(user_id)
-	
+		
 		# construct the template
 		return setup_template(
 			'Account',
-		
+			
 			# template-specific fields
 			username=user_name,
 			past_searches=past_searches

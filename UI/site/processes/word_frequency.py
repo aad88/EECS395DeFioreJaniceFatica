@@ -2,6 +2,9 @@
 import re
 from stemming.porter2 import stem
 
+#list of stop words, or words that search engines treat as irrelevant as search terms
+#used in word frequency test to ignore trivial words
+#stop words are taken from http://www.webconfs.com/stop-words.php
 stop_words = ['a','able','about','above','abroad','according','accordingly','across','actually','adj','after','afterwards','again','against','ago','ahead','ain\'t','all','allow','allows','almost','alone','along','alongside',
 'already','also','although','always','am','amid','amidst','among','amongst','an','and','another','any','anybody','anyhow','anyone','anything','anyway','anyways','anywhere','apart','appear','appreciate','appropriate','are',
 'aren\'t','around','as','a\'s','aside','ask','asking','associated','at','available','away','awfully','back','backward','backwards','be','became','because','become','becomes','becoming','been','before','beforehand',
@@ -30,16 +33,20 @@ stop_words = ['a','able','about','above','abroad','according','accordingly','acr
 'whence','whenever','where','whereafter','whereas','whereby','wherein','where\'s','whereupon','wherever','whether','which','whichever','while','whilst','whither','who','who\'d','whoever','whole','who\'ll','whom','whomever',
 'who\'s','whose','why','will','willing','wish','with','within','without','wonder','won\'t','would','wouldn\'t','yes','yet','you','you\'d','you\'ll','your','you\'re','yours','yourself',
 'yourselves','you\'ve','zero']
-#stop words are taken from http://www.webconfs.com/stop-words.php
 
+#takes in  list of strings
+#returns a list of up to the top ten strings in all input strings combined
 def get_most_frequent_words(data):
     words = {}
     stems = {}
     for string in data:
         string = string.lower()
+        #remove non alphanumeric and spaces
         re.sub("[^a-z0-9' ]+", '', string)
         wordlist = string.split()
         for word in wordlist:
+            #word stems are used to prevent 'game' and 'games' to count as seperate entries
+            #however the original word is stored, rather than the stem. This prevents 'entr' being stored for 'entry' and 'entries'. instead either 'entry' or 'entries' will be kept
             word_stem = stem(word)
             if stems.get(word_stem) != None:
                 words[stems[word_stem]] = words[stems[word_stem]] + 1
@@ -52,6 +59,7 @@ def get_most_frequent_words(data):
 
     top_ten = []
 
+    #after calculating all frequencies, find top ten words that are not stop words
     for word in words:
         if not (word in stop_words):
             if len(top_ten) == 10:
@@ -60,6 +68,8 @@ def get_most_frequent_words(data):
 
     return top_ten
 
+#takes in a list of strings, as well as a dictionary of words mapped to their frequency
+#returns the input list, but missing the word it contained with the lowest frequency
 def remove_min(list, words):
     min_str = ''
     min_val = 0
