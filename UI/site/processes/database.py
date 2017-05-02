@@ -174,22 +174,22 @@ def get_user(id):
 
 # create a row for a new gift idea
 
-CREATE_IDEA_QUERY = """
-INSERT INTO
-	ideas
-VALUES (
-	'{}',
-	'{}',
-	'{}',
-	'{}',
-	'{}',
-	{},
-	{}
-)
-;
-"""
 def create_idea(id, name, url=None, price=None, image_url=None, image_width=None, image_height=None):
-	insert_query(CREATE_IDEA_QUERY, SESSION, id, name, url, price, image_url, image_width, image_height)
+	entry = Idea()
+	entry.id = str(id)
+	entry.name = name.text
+	entry.url = str(url) if url else None
+	entry.price = str(price) if price else None
+	entry.image_url = str(image_url) if image_url else None
+	entry.image_width = int(image_width) if image_width else None
+	entry.image_height = int(image_height) if image_height else None
+	
+	try:
+		SESSION.add(entry)
+		SESSION.commit()
+	except Exception:
+		SESSION.rollback()
+		raise Exception
 
 # grab an idea by id
 

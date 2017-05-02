@@ -45,7 +45,7 @@ def process_query(user_id, info, training_data):
 		# enter as new gift idea, if applicable
 		if database.get_idea(idea['id']) is None:
 			try:
-				database.create_idea(str(idea['id']), str(idea['name']), str(url=idea['url']), str(price=idea['price']), str(image_url=idea['imageurl']), image_width=idea['imagewidth'], image_height=idea['imageheight'])
+				database.create_idea(idea['id'], idea['name'], url=idea['url'], price=idea['price'], image_url=idea['imageurl'], image_width=idea['imagewidth'], image_height=idea['imageheight'])
 			except Exception:
 				print("COULD NOT ADD A GIFT IDEA TO THE DATABASE. SOME ERROR OCCURRED.")
 				continue
